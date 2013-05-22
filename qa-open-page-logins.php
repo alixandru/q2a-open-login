@@ -205,7 +205,7 @@ class qa_open_logins_page {
 			// display some summary about the user
 			$qa_content['form_profile']=array(
 				'title' => qa_lang_html('plugin_open/my_current_user'),
-				'tags' => 'ENCTYPE="multipart/form-data" METHOD="POST" ACTION="'.qa_self_html().'"',
+				'tags' => 'ENCTYPE="multipart/form-data" METHOD="POST" ACTION="'.qa_self_html().'" CLASS="open-login-profile"',
 				'style' => 'wide',
 				'fields' => array(
 					'handle' => array(
@@ -250,9 +250,9 @@ class qa_open_logins_page {
 			if(!empty($mylogins)) {
 				// display the logins already linked to this user account
 				$qa_content['form_mylogins']=array(
-					'title' => '<br>' . qa_lang_html('plugin_open/associated_logins'),
-					'tags' => 'ENCTYPE="multipart/form-data" METHOD="POST" ACTION="'.qa_self_html().'"',
-					'style' => 'tall',
+					'title' => qa_lang_html('plugin_open/associated_logins'),
+					'tags' => 'ENCTYPE="multipart/form-data" METHOD="POST" ACTION="'.qa_self_html().'" CLASS="open-login-accounts"',
+					'style' => 'wide',
 					'fields' => array(),
 					'buttons' => array(
 						'cancel' => array(
@@ -273,6 +273,7 @@ class qa_open_logins_page {
 						'label' => '<strong>' . ucfirst($login['source']) . '</strong> ' . $email,
 						'tags' => 'NAME="login_' . $login['source'] . '_' . md5($login['identifier']) . '"',
 						'type' => 'checkbox',
+						'style' => 'tall'
 					);
 				}
 				$qa_content['form_mylogins']['fields'] = $data;
@@ -285,8 +286,8 @@ class qa_open_logins_page {
 			// display other logins which could be linked to this user account
 			$qa_content['form_merge']=array(
 				'title' => $disp_conf ? qa_lang_html('plugin_open/other_logins_conf_title') : qa_lang_html('plugin_open/other_logins'),
-				'tags' => 'ENCTYPE="multipart/form-data" METHOD="POST" ACTION="'.qa_self_html().'"',
-				'style' => 'tall',
+				'tags' => 'ENCTYPE="multipart/form-data" METHOD="POST" ACTION="'.qa_self_html().'" CLASS="open-login-others"',
+				'style' => 'wide',
 				'note' => $disp_conf ? qa_lang_html('plugin_open/other_logins_conf_text'): null,
 				'fields' => array(),
 				'buttons' => array(
@@ -320,6 +321,7 @@ class qa_open_logins_page {
 					'label' => '<strong>' . $name . '</strong> ' . $email,
 					'tags' => 'NAME="' . $type . '_' . $login['source'] . '_' . md5($login['identifier']) . '"',
 					'type' => 'checkbox',
+					'style' => 'tall'
 				);
 			}
 			$qa_content['form_merge']['fields'] = $data;
