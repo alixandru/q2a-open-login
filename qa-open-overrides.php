@@ -26,6 +26,44 @@
 */
 
 
+
+/**
+ * Extends the logout functionality by performing some extra clean up for
+ * the external login modules.
+ *
+ * Currently only the login modules using OAuth (like Facebook and Github)
+ * need additional logout processing (defined in their do_logout methods). 
+ * The OpenID-based login modules will simply use the default functionality.
+ *
+ * Only logout functionality is affected by this function. Login mechanism
+ * is handled by #qa_log_in_external_user function.
+ */
+function qa_set_logged_in_user($userid, $handle='', $remember=false, $source=null)
+{
+	// if a logout was requested, do extra stuff
+	if (!isset($userid)) {
+		// get all modules which have a custom logout logic
+		$loginmodules=qa_load_modules_with('login', 'do_logout');
+
+		// do the work
+		foreach ($loginmodules as $module) {
+			$module->do_logout();
+		}
+	}
+	
+	// then just perform the default tasks
+	qa_set_logged_in_user_base($userid, $handle, $remember, $source);
+}
+
+
+
+/**
+ * Overrides the default mechanism of logging in from external sources.
+ *
+ * Adds a different way of tracking the sessions and performs some 
+ * additional tasks when creating an user account (setting new fields,
+ * extra checks, etc).
+ */
 function qa_log_in_external_user($source, $identifier, $fields)
 {
 	require_once QA_INCLUDE_DIR.'qa-db-users.php';

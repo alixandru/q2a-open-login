@@ -84,10 +84,7 @@ class qa_google_open {
 	function match_source($source) {
 		return substr($source, 0, 6) == 'google';
 	}
-
-	function do_logout() {
-		// nothing
-	}
+	
 	
 	function login_html($tourl, $context) {
 		$app_ok = qa_opt('google_app_enabled');
@@ -98,7 +95,7 @@ class qa_google_open {
 		$this->printCode($tourl, false, $context);
 	}
 
-	
+
 	function logout_html($tourl) {
 		$app_ok = qa_opt('google_app_enabled');
 		if (!$app_ok) {

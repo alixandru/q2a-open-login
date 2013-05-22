@@ -85,10 +85,7 @@ class qa_yahoo_open {
 	function match_source($source) {
 		return substr($source, 0, 5) == 'yahoo';
 	}
-
-	function do_logout() {
-		// nothing
-	}
+	
 	
 	function login_html($tourl, $context) {
 		$app_ok = qa_opt('yahoo_app_enabled');
