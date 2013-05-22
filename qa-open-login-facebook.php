@@ -130,7 +130,7 @@ class qa_facebook_open {
 			
 		} else {
 			$url = $facebook->getLoginUrl(array(
-				'scope'			=> 'user_about_me,user_location,user_website',
+				'scope'			=> 'email,user_about_me,user_location,user_website',
 				'redirect_uri'	=> $tourl,
 			));
 			$img = 'f-connect';
