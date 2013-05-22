@@ -29,6 +29,7 @@
 function qa_log_in_external_user($source, $identifier, $fields)
 {
 	require_once QA_INCLUDE_DIR.'qa-db-users.php';
+	$remember = qa_opt('open_login_remember') ? true : false;
 	
 	$users=qa_db_user_login_find($source, $identifier);
 	$countusers=count($users);
@@ -47,7 +48,7 @@ function qa_log_in_external_user($source, $identifier, $fields)
 		qa_fatal_error('External login mapped to more than one user'); // should never happen
 	
 	if ($countusers) // user exists so log them in
-		qa_set_logged_in_user($users[0]['userid'], $users[0]['handle'], false, $aggsource);
+		qa_set_logged_in_user($users[0]['userid'], $users[0]['handle'], $remember, $aggsource);
 	
 	else { // create and log in user
 		require_once QA_INCLUDE_DIR.'qa-app-users-edit.php';
@@ -58,7 +59,7 @@ function qa_log_in_external_user($source, $identifier, $fields)
 		
 		if (count($users)==1) {
 			qa_db_user_login_sync(false);
-			qa_set_logged_in_user($users[0]['userid'], $users[0]['handle'], false, $aggsource);
+			qa_set_logged_in_user($users[0]['userid'], $users[0]['handle'], $remember, $aggsource);
 		
 		} else {
 			$handle=qa_handle_make_valid(@$fields['handle']);
@@ -93,7 +94,7 @@ function qa_log_in_external_user($source, $identifier, $fields)
 			if (strlen(@$fields['avatar']))
 				qa_set_user_avatar($userid, $fields['avatar']);
 					
-			qa_set_logged_in_user($userid, $handle, false, $aggsource);
+			qa_set_logged_in_user($userid, $handle, $remember, $aggsource);
 			
 			return count($emailusers);
 		}

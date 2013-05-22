@@ -103,6 +103,11 @@ class qa_open_logins_page {
 		// find other un-linked accounts with the same email
 		$otherlogins = qa_db_user_login_find_other__open($userid, $findemail);
 			
+		if (qa_clicked('dosaveprofile')) {
+			qa_opt('open_login_remember', qa_post_text('remember') ? '1' : '0');
+			qa_redirect('logins', array('state' => 'profile-saved'));
+		}
+		
 		if (qa_clicked('docancel')) {
 			$tourl = qa_post_text('to');
 			if(!empty($tourl)) {
@@ -214,9 +219,32 @@ class qa_open_logins_page {
 						'value' => qa_html($useraccount['email']),
 						'type' => 'static',
 					),
+					
+					'remember' => array(
+						'type' => 'checkbox',
+						'label' => qa_lang_html('users/remember_label'),
+						'note' => qa_lang_html('plugin_open/remember_me'),
+						'tags' => 'NAME="remember"',
+						'value' => qa_opt('open_login_remember') ? true : false,
+					),
 				),
+				
+				'buttons' => array(
+					'save' => array(
+						'tags' => 'onClick="qa_show_waiting_after(this, false);"',
+						'label' => qa_lang_html('users/save_profile'),
+					),
+				),
+				
+				'hidden' => array(
+					'dosaveprofile' => '1'
+				),
+
 			);
 			
+			if (qa_get_state()=='profile-saved') {
+				$qa_content['form_profile']['ok']=qa_lang_html('users/profile_saved');
+			}
 			
 			$has_content = false;
 			if(!empty($mylogins)) {

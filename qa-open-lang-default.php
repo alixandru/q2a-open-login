@@ -43,6 +43,7 @@ return array(
 	'local_user' => 'Local user account',
 	'login_title' => 'Login through OpenID or OAuth',
 	'login_description' => 'Choose an OpenID or OAuth provider from the list to login without creating an account on this site.',
+	'remember_me' => 'Keep me signed in when I log in using any of the linked accounts.',
 	
 	'google_login' => 'Login using Google',
 	'facebook_login' => 'Login using Facebook',

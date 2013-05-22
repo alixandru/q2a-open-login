@@ -43,6 +43,7 @@ return array(
 	'local_user' => 'Cont local',
 	'login_title' => 'Autentificare folosind OpenID sau OAuth',
 	'login_description' => 'Alegeti un furnizor OpenID sau OAuth din lista de mai jos pentru a va autentifica fara sa fie nevoie sa va mai creati un cont pe site-ul nostru',
+	'remember_me' => 'Pastreaza-ma autentificat cand ma loghez folosind oricare din conturile de mai jos',
 	
 	'google_login' => 'Login prin Google',
 	'facebook_login' => 'Login prin Facebook',

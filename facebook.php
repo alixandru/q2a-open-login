@@ -585,6 +585,16 @@ abstract class BaseFacebook
         $this->state = null;
         $this->clearPersistentData('state');
         return $_REQUEST['code'];
+		
+      ######### change by Alex
+      } elseif(isset($_GET['fb_source']) && $_GET['fb_source'] == 'appcenter' && 
+              isset($_GET['fb_appcenter']) && $_GET['fb_appcenter'] == '1' && 
+			  isset($_SERVER['HTTP_REFERER']) && stristr($_SERVER['HTTP_REFERER'], 'www.facebook.com') !== false &&
+              isset($_GET['code']) ) {
+		// allow AppCenter users to login directly -- this should be safe for the use of this Q2A plugin
+		return $_REQUEST['code'];
+      #######################
+	  
       } else {
         self::errorLog('CSRF state token does not match one provided.');
         return false;

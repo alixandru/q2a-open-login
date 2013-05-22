@@ -48,7 +48,7 @@ class qa_facebook_open {
 		$facebook = $this->getFacebook();
 		$fb_userid=$facebook->getUser();
 		
-		if ($fb_userid)
+		if ($fb_userid) {
 			try {
 				$user=$facebook->api('/' . $fb_userid . '?fields=email,name,verified,location,website,about,picture');
 				
@@ -72,6 +72,11 @@ class qa_facebook_open {
 			} catch (FacebookApiException $e) {
 				/* do nothing */
 			}
+			
+		} else if(isset($_GET['fb_source']) && $_GET['fb_source'] == 'appcenter' && isset($_GET['fb_appcenter']) && isset($_GET['code']) ) {
+			// this is a way to track somehow there was an error logging in when coming from Facebook App Center
+			qa_redirect_raw(qa_opt('site_url') . '?fbappcntrerr');
+		}
 	}
 	
 
