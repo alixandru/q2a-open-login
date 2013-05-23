@@ -27,16 +27,16 @@
 
 /*
 	Plugin Name: Open Login
-	Plugin URI: 
+	Plugin URI: https://github.com/alixandru/q2a-open-login
 	Plugin Description: Allows users to log in via Facebook, Google and other Open Auth providers
-	Plugin Version: 1.0.0
-	Plugin Date: 2013-01-31
+	Plugin Version: 1.1.0
+	Plugin Date: 2013-05-23
 	Plugin Author: Alex Lixandru
 	Plugin Author URI: http://alex.punctsivirgula.ro/
 	Plugin License: GPLv2
 	Plugin Minimum Question2Answer Version: 1.5.4
 	Plugin Minimum PHP Version: 5
-	Plugin Update Check URI:
+	Plugin Update Check URI: https://raw.github.com/alixandru/q2a-open-login/master/qa-plugin.php
 */
 
 /*
