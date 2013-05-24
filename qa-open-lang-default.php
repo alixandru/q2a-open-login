@@ -8,7 +8,7 @@
 
 	
 	File: qa-plugin/open-login/qa-open-lang-default.php
-	Version: 1.0.0
+	Version: 2.0.0
 	Description: Default English translation of all plugin texts
 
 
@@ -44,9 +44,5 @@ return array(
 	'login_title' => 'Login through OpenID or OAuth',
 	'login_description' => 'Choose an OpenID or OAuth provider from the list to login without creating an account on this site.',
 	'remember_me' => 'Keep me signed in when I log in using any of the linked accounts.',
-	
-	'google_login' => 'Login using Google',
-	'facebook_login' => 'Login using Facebook',
-	'github_login' => 'Login using Github',
-	'yahoo_login' => 'Login using Yahoo!',
+	'login_using' => 'Login using ^',
 );

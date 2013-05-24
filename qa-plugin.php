@@ -8,7 +8,7 @@
 
 	
 	File: qa-plugin/open-login/qa-plugin.php
-	Version: 1.0.0
+	Version: 2.0.0
 	Description: Initiates Open Login plugin
 
 
@@ -29,8 +29,8 @@
 	Plugin Name: Open Login
 	Plugin URI: https://github.com/alixandru/q2a-open-login
 	Plugin Description: Allows users to log in via Facebook, Google and other Open Auth providers
-	Plugin Version: 1.1.0
-	Plugin Date: 2013-05-23
+	Plugin Version: 2.0.0
+	Plugin Date: 2013-05-24
 	Plugin Author: Alex Lixandru
 	Plugin Author URI: http://alex.punctsivirgula.ro/
 	Plugin License: GPLv2
@@ -54,15 +54,19 @@ if (!QA_FINAL_EXTERNAL_USERS) { // login modules don't work with external user i
 	qa_register_plugin_phrases('qa-open-lang-*.php', 'plugin_open');
 	qa_register_plugin_overrides('qa-open-overrides.php');
 	qa_register_plugin_layer('qa-open-layer.php', 'OAuth/OpenID Layer');
+	qa_register_plugin_module('page', 'qa-open-page-logins.php', 'qa_open_logins_page', 'Open Login Configuration');
 	
-	qa_register_plugin_module('page', 'qa-open-page-logins.php', 'qa_open_logins_page', 'OAuth/OpenID');
-	qa_register_plugin_module('login', 'qa-open-login-facebook.php', 'qa_facebook_open', 'Facebook Login');
-	qa_register_plugin_module('login', 'qa-open-login-google.php', 'qa_google_open', 'Google Login');
-	qa_register_plugin_module('login', 'qa-open-login-yahoo.php', 'qa_yahoo_open', 'Yahoo Login');
-	qa_register_plugin_module('login', 'qa-open-login-github.php', 'qa_github_open', 'Github Login');
+	// sice we're not allowed to access the database at this step, take the information from a local file
+	$providers = @include_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'providers.php';
+	if ($providers) {
+		// loop through all active providers and register them
+		$providerList = explode(',', $providers);
+		foreach($providerList as $provider) {
+			qa_register_plugin_module('login', 'qa-open-login.php', 'qa_open_login', $provider);
+		}
+	}
 	
 }
-
 
 /*
 	Omit PHP closing tag to help avoid accidental output

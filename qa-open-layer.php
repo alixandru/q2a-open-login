@@ -8,7 +8,7 @@
 
 	
 	File: qa-plugin/open-login/qa-open-layer.php
-	Version: 1.0.0
+	Version: 2.0.0
 	Description: Extends current theme with additional functionalities
 
 
@@ -64,48 +64,15 @@ class qa_html_theme_layer extends qa_html_theme_base
 	function head_css() {
 		parent::head_css();
 		
-		$hidecss = qa_opt('open_login_css') === '1';
+		$hidecss = qa_opt('open_login_css') == '1';
 		
 		if (!$hidecss) {
 			// display CSS inline
 			$imgpath = QA_HTML_THEME_LAYER_URLTOROOT . 'loginsprites.png';
 			
 			$this->output('<style type="text/css"><!--');
-			$this->output("
-				/* Open Login buttons */
-				.open-login-button {
-					background: url($imgpath) no-repeat;
-					width: 70px;
-					height: 22px;
-					cursor: pointer;
-				}
-
-				.f-connect{ background-position: 0 0; }
-				.g-connect{ background-position: 0 -22px; }
-				.h-connect{ background-position: 0 -44px; }
-				.y-connect{ background-position: 0 -66px; }
-
-				.f-logout  { background-position: -70px 0; }
-				.g-logout  { background-position: -70px -22px; }
-				.h-logout  { background-position: -70px -44px; }
-				.y-logout  { background-position: -70px -66px; }
-				
-				.qa-nav-user {
-					height: 24px;
-					margin-top: 2px;
-				}
-				.qa-nav-user-list, .qa-logged-in, .qa-logged-in-points {
-					line-height: 22px;
-				}
-				.qa-nav-user-item {
-					display: block;
-					float: left;
-					margin: 0;
-					padding: 0 5px;
-					height: 22px;
-					border-left:1px solid transparent;
-				}
-			");
+			$this->output(file_get_contents( QA_HTML_THEME_LAYER_URLTOROOT . 'qa-open-login.css'));
+			$this->output(".open-login-button { background-image: url($imgpath) !important; }"); // force the correct image path
 			$this->output('//--></style>');
 		}
 	}

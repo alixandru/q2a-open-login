@@ -8,7 +8,7 @@
 
 	
 	File: qa-plugin/open-login/qa-open-page-logins.php
-	Version: 1.0.0
+	Version: 2.0.0
 	Description: Implements the business logic for the plugin custom page
 
 
@@ -29,7 +29,7 @@
 class qa_open_logins_page {
 	var $directory;
 	var $urltoroot;
-	
+
 	function load_module($directory, $urltoroot) {
 		$this->directory=$directory;
 		$this->urltoroot=$urltoroot;
@@ -370,12 +370,43 @@ class qa_open_logins_page {
 		$saved=false;
 		
 		if (qa_clicked('general_save_button')) {
-			$enabled = qa_post_text('open_login_css');
-			qa_opt('open_login_css', empty($enabled) ? 0 : 1);
+			
+			// loop through all providers and see which one was enabled
+			$allProviders = scandir( $this->directory . 'Hybrid' . DIRECTORY_SEPARATOR . 'Providers' );
+			
+			$activeProviders = array();
+			foreach($allProviders as $providerFile) {
+				if(substr($providerFile,0,1) == '.') {
+					continue;
+				}
+
+				$provider = str_ireplace('.php', '', $providerFile);
+				$key = strtolower($provider);
+
+				$enabled = qa_post_text("{$key}_app_enabled_field");
+				$shortcut = qa_post_text("{$key}_app_shortcut_field");
+				qa_opt("{$key}_app_enabled", empty($enabled) ? 0 : 1);
+				qa_opt("{$key}_app_shortcut", empty($shortcut) ? 0 : 1);
+				qa_opt("{$key}_app_id", qa_post_text("{$key}_app_id_field"));
+				qa_opt("{$key}_app_secret", qa_post_text("{$key}_app_secret_field"));
+				
+				if(!empty($enabled)) {
+					$activeProviders[] = $provider;
+				}
+			}
+			
+			// at the end save a list of all active providers
+			file_put_contents( $this->directory . 'providers.php', 
+				'<' . '?' . 'php return "' . implode(',', $activeProviders) . '" ?' . '>'
+			);
+			
+			// also save the other configurations
+			$hidecss = qa_post_text('open_login_css');
+			qa_opt('open_login_css', empty($hidecss) ? 0 : 1);
 			$saved=true;
 		}
 		
-		return array(
+		$form = array(
 			'ok' => $saved ? 'Open Login preferences saved' : null,
 			
 			'fields' => array(
@@ -386,6 +417,10 @@ class qa_open_logins_page {
 					'tags' => 'NAME="open_login_css"',
 				),
 				
+				array(
+					'type' => 'static',
+					'label' => '<br /><strong>Available login providers</strong>',
+				),
 			),
 			
 			'buttons' => array(
@@ -395,8 +430,54 @@ class qa_open_logins_page {
 				),
 			),
 		);
-	}
+		
+		
+		$allProviders = scandir( $this->directory . 'Hybrid' . DIRECTORY_SEPARATOR . 'Providers' );
+		
+		foreach($allProviders as $providerFile) {
+			if(substr($providerFile,0,1) == '.' || $providerFile == 'OpenID.php') {
+				continue;
+			}
+			
+			$provider = str_ireplace('.php', '', $providerFile);
+			$key = strtolower($provider);
+			
+			$form['fields'][] = array(
+				'type' => 'checkbox',
+				'label' => 'Enable ' . $provider,
+				'value' => qa_opt("{$key}_app_enabled") ? true : false,
+				'tags' => "NAME=\"{$key}_app_enabled_field\"",
+			);
+			
+			$form['fields'][] = array(
+				'type' => 'checkbox',
+				'label' => 'Show ' . $provider . ' button in the header',
+				'value' => qa_opt("{$key}_app_shortcut") ? true : false,
+				'tags' => "NAME=\"{$key}_app_shortcut_field\"",
+			);
+			
+			$form['fields'][] = array(
+				'label' => $provider . ' App ID:',
+				'value' => qa_html(qa_opt("{$key}_app_id")),
+				'tags' => "NAME=\"{$key}_app_id_field\"",
+			);
 
+			$form['fields'][] = array(
+				'label' => $provider . ' App Secret:',
+				'value' => qa_html(qa_opt("{$key}_app_secret")),
+				'tags' => "NAME=\"{$key}_app_secret_field\"",
+			);
+			
+			$form['fields'][] = array(
+				'type' => 'static',
+				'label' => '&nbsp;',
+			);
+		}
+		
+		return $form;
+
+	}
+	
 }
 
 /*

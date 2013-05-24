@@ -8,7 +8,7 @@
 
 	
 	File: qa-plugin/open-login/qa-open-lang-ro.php
-	Version: 1.0.0
+	Version: 2.0.0
 	Description: Romanian translation of all plugin texts
 
 
@@ -44,9 +44,5 @@ return array(
 	'login_title' => 'Autentificare folosind OpenID sau OAuth',
 	'login_description' => 'Alege un furnizor OpenID sau OAuth din lista de mai jos pentru a te autentifica fara sa fie nevoie sa iti mai creezi un cont pe site-ul nostru',
 	'remember_me' => 'Pastreaza-ma autentificat cand ma loghez folosind oricare din conturile de mai jos',
-	
-	'google_login' => 'Login prin Google',
-	'facebook_login' => 'Login prin Facebook',
-	'github_login' => 'Login prin Github',
-	'yahoo_login' => 'Login prin Yahoo!',
+	'login_using' => 'Login prin ^',
 );
