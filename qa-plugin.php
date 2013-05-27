@@ -57,6 +57,8 @@ if (!QA_FINAL_EXTERNAL_USERS) { // login modules don't work with external user i
 	qa_register_plugin_module('page', 'qa-open-page-logins.php', 'qa_open_logins_page', 'Open Login Configuration');
 	
 	// sice we're not allowed to access the database at this step, take the information from a local file
+	// note: the file providers.php will be automatically generated when the configuration of the plugin
+	// is updated on the Administration page
 	$providers = @include_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'providers.php';
 	if ($providers) {
 		// loop through all active providers and register them
