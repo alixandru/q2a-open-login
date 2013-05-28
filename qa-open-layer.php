@@ -65,15 +65,21 @@ class qa_html_theme_layer extends qa_html_theme_base
 		parent::head_css();
 		
 		$hidecss = qa_opt('open_login_css') == '1';
+		$zocial = qa_opt('open_login_zocial') == '1';
 		
 		if (!$hidecss) {
 			// display CSS inline
-			$imgpath = QA_HTML_THEME_LAYER_URLTOROOT . 'loginsprites.png';
+			$path = QA_HTML_THEME_LAYER_URLTOROOT;
 			
 			$this->output('<style type="text/css"><!--');
 			$this->output(file_get_contents( QA_HTML_THEME_LAYER_URLTOROOT . 'qa-open-login.css'));
-			$this->output(".open-login-button { background-image: url($imgpath) !important; }"); // force the correct image path
 			$this->output('//--></style>');
+			
+			if($zocial) {
+				$this->output('<style type="text/css"><!--');
+				$this->output("@import url('{$path}css/zocial.css');");
+				$this->output('//--></style>');
+			}
 		}
 	}
 

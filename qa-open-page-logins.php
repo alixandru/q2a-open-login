@@ -403,6 +403,9 @@ class qa_open_logins_page {
 			// also save the other configurations
 			$hidecss = qa_post_text('open_login_css');
 			qa_opt('open_login_css', empty($hidecss) ? 0 : 1);
+			
+			$zocial = qa_post_text('open_login_zocial');
+			qa_opt('open_login_zocial', empty($zocial) ? 0 : 1);
 			$saved=true;
 		}
 		
@@ -415,6 +418,13 @@ class qa_open_logins_page {
 					'label' => 'Don\'t inline CSS. I included the styles in my theme\'s CSS file',
 					'value' => qa_opt('open_login_css') ? true : false,
 					'tags' => 'NAME="open_login_css"',
+				),
+				
+				array(
+					'type' => 'checkbox',
+					'label' => 'Use <a href="http://zocial.smcllns.com/">Zocial buttons</a> (works with inlined CSS; must be included manually otherwise)',
+					'value' => qa_opt('open_login_zocial') ? true : false,
+					'tags' => 'NAME="open_login_zocial"',
 				),
 				
 				array(

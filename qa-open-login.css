@@ -1,26 +1,11 @@
 
 	/* Open Login buttons */
-	.open-login-button {
-		background: url(/qa-plugin/open-login/loginsprites.png) no-repeat;
-		width: 70px;
-		height: 22px;
-		cursor: pointer;
+	.open-login-button.context-menu.zocial {
+		margin-top: -4px;
+		font-size: 11px;
 	}
 	
-	.facebook-connect{ background-position: 0 0; }
-	.google-connect{ background-position: 0 -22px; }
-	.github-connect{ background-position: 0 -44px; }
-	.yahoo-connect{ background-position: 0 -66px; }
-	
-	.facebook-logout  { background-position: -70px 0; }
-	.google-logout  { background-position: -70px -22px; }
-	.github-logout  { background-position: -70px -44px; }
-	.yahoo-logout  { background-position: -70px -66px; }
-	
-	
 	.open-login-button.context-login, .open-login-button.context-register {
-		background-image: none;
-		width: 200px;
 		font-weight: bold;
 	}
 	
@@ -28,21 +13,9 @@
 		padding-bottom: 20px;
 	}
 	
-	.qa-nav-user {
+	.qa-nav-user { /* this should not have negative effects */
 		height: 24px;
-		margin-top: 2px;
+		margin-top: 4px;
 	}
 	
-	.qa-nav-user-list, .qa-logged-in, .qa-logged-in-points {
-		line-height: 22px;
-	}
-	
-	.qa-nav-user-item {
-		display: block;
-		float: left;
-		margin: 0;
-		padding: 0 5px;
-		height: 22px;
-		border-left:1px solid transparent;
-	}
 	/* End of Open Login buttons */

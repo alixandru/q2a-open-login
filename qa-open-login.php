@@ -32,7 +32,7 @@ class qa_open_login {
 	var $urltoroot;
 	var $provider;
 
-	function load_module($directory, $urltoroot, $provider) {
+	function load_module($directory, $urltoroot, $type, $provider) {
 		$this->directory = $directory;
 		$this->urltoroot = $urltoroot;
 		$this->provider = $provider;
@@ -189,16 +189,12 @@ class qa_open_login {
 			return;
 		}
 		
+		$zocial = qa_opt('open_login_zocial') == '1' ? 'zocial' : ''; // use zocial buttons
 		if($logout) {
 			$url = $tourl;
-			$img = "$key-logout";
+			$classes = "$context action-logout $zocial $key";
 			$title = qa_lang_html('main/nav_logout');
-			$text = '&nbsp;';
-			if(!$showInHeader) {
-				// most likely there's no graphical button for this, so print a plain link
-				echo '<a class="qa-nav-user-link" href="' . qa_html($tourl) . '">' . $title . '</a>';
-				return;
-			}
+			$text = qa_lang_html('main/nav_logout');
 			
 		} else {
 			if(strpos($tourl, '?') === false) {
@@ -208,9 +204,9 @@ class qa_open_login {
 			}
 
 			$url = $tourl;
-			$img = "$key-connect";
+			$classes = "$context action-login $zocial $key";
 			$title = qa_lang_html_sub('plugin_open/login_using', $this->provider);
-			$text = '&nbsp;';
+			$text = $this->provider . ' ' . qa_lang_html('main/nav_login');
 			
 			if($context != 'menu') {
 				$text = $title;
@@ -218,7 +214,7 @@ class qa_open_login {
 		}
 		
 ?>
-  <div class="open-login-button context-<?php echo $context, ' ', $img?>" title="<?php echo $title;?>" onclick="window.location='<?php echo $url ?>'"><?php echo $text ?></div>
+  <a class="open-login-button context-<?php echo $classes ?>" title="<?php echo $title;?>" href="<?php echo $url ?>"><?php echo $text ?></a>
 <?php
 	
 	}

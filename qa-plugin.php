@@ -34,7 +34,7 @@
 	Plugin Author: Alex Lixandru
 	Plugin Author URI: http://alex.punctsivirgula.ro/
 	Plugin License: GPLv2
-	Plugin Minimum Question2Answer Version: 1.5.4
+	Plugin Minimum Question2Answer Version: 1.6
 	Plugin Minimum PHP Version: 5
 	Plugin Update Check URI: https://raw.github.com/alixandru/q2a-open-login/master/qa-plugin.php
 */
