@@ -13,7 +13,7 @@ The plugin also offers the ability to link multiple OpenID/OAuth-powered logins 
 
 ## Installation ##
 
-* Install [Question2Answer][]
+* Install [Question2Answer][]. This plugin requires at least version 1.6 (see the change log for details)
 * Get the source code for this plugin from [Github][], either using [Git][], or downloading directly:
 
    - To download using git, install git and then type 
@@ -57,6 +57,8 @@ Don't edit the string on the left-hand side. Once you've completed the translati
 
 * Rewrite the plugin to use HybridAuth 2.1.2
 * Add the ability to specify what login providers to appear in the page header
+* Add the ability to specify whether to use a CSS3 icon pack or plain links
+* The plugin requires Q2A 1.6. Older versions of Q2A should use version 1.1.0 of the plugin
 
 
 **v1.1.0**
