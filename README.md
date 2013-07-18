@@ -6,7 +6,7 @@ This is a plugin for **Question2Answer** that allows users to log in via Faceboo
 
 
 ## Description ##
-This is an extension of the Facebook Login plugin, to which it adds additional providers. It is based on [HybridAuth](http://hybridauth.sourceforge.net/) library which acts as a middleware between the plugin and a wide range of OAuth and OpenID service providers. For this reason, it is possible to add any login provider supported by HybridAuth to your Q2A installation with virtually no effort.
+This is an extension of the Facebook Login plugin, to which it adds additional login providers. It is based on [HybridAuth](http://hybridauth.sourceforge.net/) library which acts as a middleware between the plugin and a wide range of OAuth and OpenID service providers. For this reason, it is possible to add any identity provider supported by HybridAuth to your Q2A installation with virtually no effort.
 
 The plugin also offers the ability to link multiple OpenID/OAuth-powered logins to a Q2A user account, allowing users to log in to the same account via multiple providers. For example, an user might link his or her Facebook and Google accounts to the Q2A user account and then log in to the Q2A site through any of the 3 methods (Q2A login page, Facebook OAuth or Google OpenID).
 
@@ -18,12 +18,12 @@ The plugin also offers the ability to link multiple OpenID/OAuth-powered logins 
 
    - To download using git, install git and then type 
      `git clone git://github.com/alixandru/q2a-open-login.git open-login`
-   - To download directly, go to the [project page][Github] and click **Download**
+   - To download directly, go to the [project page][Github] and click **Download ZIP**
 
 * Go to **Admin -> Plugins** on your Q2A installation and enable the providers which you would like to use. For all OAuth-based providers (all, except Google and Yahoo, which use OpenID) you need to provide some keys after you register your application with them. See [HybridAuth documentation](http://hybridauth.sourceforge.net/userguide.html) for information about what is needed for each provider.
-* Optionally add the contents of the *qa-open-login.css* file to your theme's CSS file and select the option **Don't inline CSS** from the **Open Login Configuration** section on the **Admin -> Plugins** page.
+* Optionally add the contents of the *qa-open-login.css* file to your theme's CSS file and select the option **Don't inline CSS** from the **Open Login Configuration** section on the **Admin -> Plugins** page. Please note that, according to the URL of your Q2A instance, you might need to adjust the paths in the CSS file.
 
-Note: this plugin requires some database changes: a column called `oemail` (original email) will be added to the tables `qa_users` and `qa_user_logins`. These columns will store the email associated with the OpenID/OAuth accounts when the users first logs in through any OpenID/OAuth provider. These emails will then be used to determine if there are accounts which can be linked together.
+Note: this plugin requires some database changes: a column called `oemail` (original email) will be added to the tables `qa_users` and `qa_user_logins`. These columns will store the email associated with the OpenID/OAuth accounts when the users log in through any OpenID/OAuth provider. These emails will then be used to determine if there are accounts which can be linked together. The database changes will be performed when the administration page is accessed for the first time after the plugin is installed or upgraded. This is a one-time-only operation and it should not affect your existing data in any way.
 
   [Question2Answer]: http://www.question2answer.org/install.php
   [Git]: http://git-scm.com/
