@@ -41,8 +41,8 @@ return array(
 	'no_logins_title' => 'No other connected accounts for your profile',
 	'no_logins_text' => 'Log in using an OpenID provider to connect your current profile with other accounts.',
 	'local_user' => 'Local user account',
-	'login_title' => 'Login through OpenID or OAuth',
-	'login_description' => 'Choose an OpenID or OAuth provider from the list to login without creating an account on this site.',
+	'login_title' => 'Login through an external provider',
+	'login_description' => 'Choose a service provider from the list below to login without creating an account on this site.',
 	'remember_me' => 'Keep me signed in when I log in using any of the linked accounts.',
 	'login_using' => 'Login using ^',
 );

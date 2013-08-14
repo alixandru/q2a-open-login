@@ -182,6 +182,9 @@ class qa_open_login {
 
 	function printCode($tourl, $logout, $context) {
 		$key = strtolower($this->provider);
+		if ($key == 'live') {
+			$key = 'windows'; // translate provider name to zocial key
+		}
 		$showInHeader = qa_opt("{$key}_app_shortcut") ? true : false;
 		
 		if(!$logout && !$showInHeader && $context == 'menu') {

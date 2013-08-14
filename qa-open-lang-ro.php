@@ -41,8 +41,8 @@ return array(
 	'no_logins_title' => 'Nu a fost gasit nici un alt cont asociat',
 	'no_logins_text' => 'Autentifica-te folosind un serviciu OpenID pentru a asocia profilul tau curent cu alte conturi.',
 	'local_user' => 'Cont local',
-	'login_title' => 'Autentificare folosind OpenID sau OAuth',
-	'login_description' => 'Alege un furnizor OpenID sau OAuth din lista de mai jos pentru a te autentifica fara sa fie nevoie sa iti mai creezi un cont pe site-ul nostru',
+	'login_title' => 'Autentificare folosind un serviciu extern',
+	'login_description' => 'Alege un serviciu din lista de mai jos pentru a te autentifica fara sa fie nevoie sa iti mai creezi un cont pe site-ul nostru',
 	'remember_me' => 'Pastreaza-ma autentificat cand ma loghez folosind oricare din conturile de mai jos',
 	'login_using' => 'Login prin ^',
 );

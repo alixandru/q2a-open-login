@@ -360,7 +360,8 @@ class qa_open_logins_page {
 		}
 		
 		$qa_content['navigation']['sub']=qa_account_sub_navigation();
-			
+		$qa_content['script_onloads'][]='$(function(){ window.setTimeout(function() { qa_conceal(".form-notification-ok"); }, 1500); });';
+		
 		return $qa_content;
 
 	}
@@ -477,6 +478,24 @@ class qa_open_logins_page {
 				'value' => qa_html(qa_opt("{$key}_app_secret")),
 				'tags' => "NAME=\"{$key}_app_secret_field\"",
 			);
+			
+			$docUrl = "http://hybridauth.sourceforge.net/userguide/IDProvider_info_{$provider}.html";
+			if($provider == 'Google' || $provider == 'Yahoo') {
+				$form['fields'][] = array(
+					'type' => 'static',
+					'label' => 'By default, <strong>' . $provider . '</strong> uses OpenID and does not need any keys, so these fields should ' .
+								'be left blank. However, if you replaced the provider file with the one that uses OAuth, and not OpenID, you ' .
+								'need to provide the app keys. In this case, click on <a href="' . $docUrl . '" target="_blank">' . $docUrl . '</a> ' .
+								'for information on how to get them.',
+				);
+				
+			} else {
+				$form['fields'][] = array(
+					'type' => 'static',
+					'label' => 'For information on how to setup your application with <strong>' . $provider . '</strong> ' .
+								'see the <strong>Registering application</strong> section from <a href="' . $docUrl . '" target="_blank">' . $docUrl . '</a>.',
+				);
+			}
 			
 			$form['fields'][] = array(
 				'type' => 'static',

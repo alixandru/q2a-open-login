@@ -55,7 +55,7 @@ class qa_html_theme_layer extends qa_html_theme_base
 		if(!empty($this->content['custom'])) {
 			$title = qa_lang_html('plugin_open/login_title');
 			$descr = qa_lang_html('plugin_open/login_description');
-			$content = str_replace('<BR>', '&nbsp;', $this->content['custom']);
+			$content = str_replace('<BR>', '', $this->content['custom']);
 			
 			$this->content['custom'] = "<br /><br /><div><h1>$title</h1><p>$descr</p>$content</div>";
 		}

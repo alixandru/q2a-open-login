@@ -53,6 +53,13 @@ Don't edit the string on the left-hand side. Once you've completed the translati
 
 ## Change log ##
 
+**v2.0.1**
+
+* Add links to the HybridAuth documentation pages from the plugin admin section
+* Correct layout issue with Windows Live provider
+* Translation changes and other small fixes
+
+
 **v2.0.0**
 
 * Rewrite the plugin to use HybridAuth 2.1.2
