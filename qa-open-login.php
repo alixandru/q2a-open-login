@@ -182,10 +182,10 @@ class qa_open_login {
 
 	function printCode($tourl, $logout, $context) {
 		$key = strtolower($this->provider);
+		$showInHeader = qa_opt("{$key}_app_shortcut") ? true : false;
 		if ($key == 'live') {
 			$key = 'windows'; // translate provider name to zocial key
 		}
-		$showInHeader = qa_opt("{$key}_app_shortcut") ? true : false;
 		
 		if(!$logout && !$showInHeader && $context == 'menu') {
 			// do not show login button in the header for this
