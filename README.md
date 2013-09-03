@@ -37,6 +37,24 @@ Since this plugin is based on [HybridAuth](http://hybridauth.sourceforge.net/), 
 
 
 
+## Handling login errors ##
+
+Whenever a login attempt fails, the user will be redirected to the original page but no error message will be displayed. This is to save end-users from technical error messages which would not help them much anyway. If you instead would like to show an error message, you can do that through a layer or a custom theme. 
+
+If something happens with the login process and authentication cannot be done, the user will be redirected to a page whose URL follows the following pattern: `yoursite.com/?provider=X&code=0`. The custom layer or theme could check if the two parameters are present in the URL and display an error message based on the code number. The descriptions of the error codes are below.
+
+    0 : Unspecified error.
+    1 : Hybriauth configuration error.
+    2 : Provider not properly configured.
+    3 : Unknown or disabled provider.
+    4 : Missing provider application credentials.
+    5 : Authentification failed. The user has canceled the authentication or the provider refused the connection.
+    6 : User profile request failed. Most likely the user is not connected to the provider and he should authenticate again.
+    7 : User not connected to the provider.
+    8 : Provider does not support this feature.
+
+
+
 ## Translation ##
 
 The translation file is **qa-open-lang-default.php**.  Copy this file to the same directory and change the **"default"** part of the filename to your language code. Edit the right-hand side strings in this file, for example, changing:
@@ -52,6 +70,13 @@ Don't edit the string on the left-hand side. Once you've completed the translati
 
 
 ## Change log ##
+
+**v2.0.2**
+
+* Add Russian translation, contributed by [Dmitry Mikhirev](https://github.com/mikhirev)
+* Updated this file with information on error handling
+* Other small fixes
+
 
 **v2.0.1**
 

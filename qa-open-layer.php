@@ -72,7 +72,7 @@ class qa_html_theme_layer extends qa_html_theme_base
 			$path = QA_HTML_THEME_LAYER_URLTOROOT;
 			
 			$this->output('<style type="text/css"><!--');
-			$this->output(file_get_contents( QA_HTML_THEME_LAYER_URLTOROOT . 'qa-open-login.css'));
+			$this->output(@file_get_contents( QA_HTML_THEME_LAYER_URLTOROOT . 'qa-open-login.css'));
 			$this->output('//--></style>');
 			
 			if($zocial) {
