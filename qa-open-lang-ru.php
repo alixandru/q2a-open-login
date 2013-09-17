@@ -3,13 +3,14 @@
 /*
 	Question2Answer (c) Gideon Greenspan
 	Open Login Plugin (c) Alex Lixandru
+	Russian Translation (c) Dmitry Mikhirev
 
 	http://www.question2answer.org/
 
 	
-	File: qa-plugin/open-login/qa-open-lang-default.php
+	File: qa-plugin/open-login/qa-open-lang-ru.php
 	Version: 2.0.0
-	Description: Default English translation of all plugin texts
+	Description: Russian translation of all plugin texts
 
 
 	This program is free software; you can redistribute it and/or

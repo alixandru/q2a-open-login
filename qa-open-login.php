@@ -217,7 +217,7 @@ class qa_open_login {
 		}
 		
 ?>
-  <a class="open-login-button context-<?php echo $classes ?>" title="<?php echo $title;?>" href="<?php echo $url ?>"><?php echo $text ?></a>
+  <a class="open-login-button context-<?php echo $classes ?>" title="<?php echo $title;?>" href="<?php echo $url ?>" rel="nofollow"><?php echo $text ?></a>
 <?php
 	
 	}

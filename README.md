@@ -71,10 +71,15 @@ Don't edit the string on the left-hand side. Once you've completed the translati
 
 ## Change log ##
 
+**v2.0.3**
+
+* Code cleanup.
+
+
 **v2.0.2**
 
 * Add Russian translation, contributed by [Dmitry Mikhirev](https://github.com/mikhirev)
-* Updated this file with information on error handling
+* Updated documentation with information on error handling
 * Other small fixes
 
 
