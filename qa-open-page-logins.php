@@ -119,6 +119,7 @@ class qa_open_logins_page {
 			// a request to merge (link) multiple accounts was made
 			require_once QA_INCLUDE_DIR.'qa-app-users-edit.php';
 			$recompute = false;
+			$email = null;
 			
 			// see which account was selected, if any
 			foreach($otherlogins as $login) {
@@ -140,6 +141,9 @@ class qa_open_logins_page {
 						// safe to delete user profile
 						qa_delete_user($olduserid);
 						$recompute = true;
+						if(empty($email)) $email = $login['email'];
+						if(empty($email)) $email = $login['oemail'];
+						if(empty($email)) $email = $login['uloemail'];
 					}
 					
 				} else {
@@ -150,6 +154,9 @@ class qa_open_logins_page {
 						// we'll simply delete the selected user
 						qa_delete_user($login['userid']);
 						$recompute = true;
+						if(empty($email)) $email = $login['email'];
+						if(empty($email)) $email = $login['oemail'];
+						if(empty($email)) $email = $login['uloemail'];
 					}
 				}
 			}
@@ -158,6 +165,16 @@ class qa_open_logins_page {
 			if($recompute) {
 				require_once QA_INCLUDE_DIR.'qa-db-points.php';
 				qa_db_userpointscount_update();
+				
+				// also check the email address on the remaining user account
+				if(empty($useraccount['email']) && !empty($email)) {
+					// update the account if the email address is not used anymore
+					$emailusers=qa_db_user_find_by_email_or_oemail__open($email);
+					if (count($emailusers) == 0) {
+						qa_db_user_set($userid, 'email', $email);
+						$useraccount['email'] = $email; // to show on the page
+					}
+				}
 			}
 			
 			$conf = qa_post_text('confirm');
