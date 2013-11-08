@@ -80,9 +80,9 @@ class qa_open_login {
 			// prepare the configuration of HybridAuth
 			$config = $this->getConfig($loginCallback);
 			
-			$tourl=qa_get('to');
-			if(!isset($tourl)) {
-				$tourl = qa_request();
+			$topath = qa_get('to');
+			if(!isset($topath)) {
+				$topath = ''; // redirect to front page
 			}
 			
 			try {
@@ -107,9 +107,9 @@ class qa_open_login {
 					));
 				
 				if($duplicates > 0) {
-					qa_redirect('logins', array('confirm' => '1', 'to' => $tourl));
+					qa_redirect('logins', array('confirm' => '1', 'to' => $topath));
 				} else {
-					qa_redirect_raw($tourl);
+					qa_redirect_raw(qa_opt('site_url') . $topath);
 				}
 				
 			} catch(Exception $e) {
@@ -119,8 +119,15 @@ class qa_open_login {
 					$adapter->logout();
 				}
 				
+				$qry = 'provider=' . $this->provider . '&code=' . $e->getCode();
+				if(strstr($topath, '?') === false) {
+					$topath .= '?' . $qry;
+				} else {
+					$topath .= '&' . $qry;
+				}
+				
 				// redirect
-				qa_redirect_raw($tourl . '#' . $this->provider . '-error-' . $e->getCode());
+				qa_redirect_raw(qa_opt('site_url') . $topath);
 			}
 		}
 		
@@ -207,8 +214,14 @@ class qa_open_login {
 			$text = qa_lang_html('main/nav_logout');
 			
 		} else {
-			$topath=qa_get('to'); // lets user switch between login and register without losing destination page
-			$tourl = isset($topath) ? $topath : qa_path(qa_request(), $_GET, ''); // build our own tourl
+			$topath = qa_get('to'); // lets user switch between login and register without losing destination page
+			
+			// clean GET parameters (not performed when to parameter is already passed) 
+			$get = $_GET;
+			unset($get['provider']);
+			unset($get['code']);
+			
+			$tourl = isset($topath) ? $topath : qa_path(qa_request(), $get, ''); // build our own tourl
 			$params = array(
 				'login' => $key,
 				'to' => $tourl
