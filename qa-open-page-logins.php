@@ -169,7 +169,7 @@ class qa_open_logins_page {
 				// also check the email address on the remaining user account
 				if(empty($useraccount['email']) && !empty($email)) {
 					// update the account if the email address is not used anymore
-					$emailusers=qa_db_user_find_by_email_or_oemail__open($email);
+					$emailusers=qa_db_user_find_by_email($email);
 					if (count($emailusers) == 0) {
 						qa_db_user_set($userid, 'email', $email);
 						$useraccount['email'] = $email; // to show on the page
