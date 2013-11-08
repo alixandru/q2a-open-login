@@ -440,7 +440,7 @@ class qa_open_logins_page {
 				
 				array(
 					'type' => 'checkbox',
-					'label' => 'Use <a href="http://zocial.smcllns.com/">Zocial buttons</a> (works with inlined CSS; must be included manually otherwise)',
+					'label' => 'Use <a href="http://zocial.smcllns.com/">Zocial buttons</a> (works out-of-the-box with inlined CSS; if "Don\'t inline CSS" checkbox is selected, the custom theme must be manually modified to import <i>zocial.css</i> file)',
 					'value' => qa_opt('open_login_zocial') ? true : false,
 					'tags' => 'NAME="open_login_zocial"',
 				),
