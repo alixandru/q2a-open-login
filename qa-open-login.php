@@ -80,6 +80,11 @@ class qa_open_login {
 			// prepare the configuration of HybridAuth
 			$config = $this->getConfig($loginCallback);
 			
+			$tourl=qa_get('to');
+			if(!isset($tourl)) {
+				$tourl = qa_request();
+			}
+			
 			try {
 				// try to login
 				$hybridauth = new Hybrid_Auth( $config );
@@ -102,7 +107,9 @@ class qa_open_login {
 					));
 				
 				if($duplicates > 0) {
-					qa_redirect('logins', array('confirm' => '1', 'to' => qa_path(qa_request())));
+					qa_redirect('logins', array('confirm' => '1', 'to' => $tourl));
+				} else {
+					qa_redirect_raw($tourl);
 				}
 				
 			} catch(Exception $e) {
@@ -113,7 +120,7 @@ class qa_open_login {
 				}
 				
 				// redirect
-				qa_redirect(qa_request(), array('provider' => $this->provider, 'code' => $e->getCode()));
+				qa_redirect_raw($tourl . '#' . $this->provider . '-error-' . $e->getCode());
 			}
 		}
 		
@@ -181,11 +188,11 @@ class qa_open_login {
 	
 
 	function printCode($tourl, $logout, $context) {
-		$key = strtolower($this->provider);
-		$showInHeader = qa_opt("{$key}_app_shortcut") ? true : false;
+		$css = $key = strtolower($this->provider);
 		if ($key == 'live') {
-			$key = 'windows'; // translate provider name to zocial key
+			$css = 'windows'; // translate provider name to zocial css class
 		}
+		$showInHeader = qa_opt("{$key}_app_shortcut") ? true : false;
 		
 		if(!$logout && !$showInHeader && $context == 'menu') {
 			// do not show login button in the header for this
@@ -195,18 +202,19 @@ class qa_open_login {
 		$zocial = qa_opt('open_login_zocial') == '1' ? 'zocial' : ''; // use zocial buttons
 		if($logout) {
 			$url = $tourl;
-			$classes = "$context action-logout $zocial $key";
+			$classes = "$context action-logout $zocial $css";
 			$title = qa_lang_html('main/nav_logout');
 			$text = qa_lang_html('main/nav_logout');
 			
 		} else {
-			if(strpos($tourl, '?') === false) {
-				$tourl .= '?login=' . $key;
-			} else {
-				$tourl .= '&login=' . $key;
-			}
-
-			$url = $tourl;
+			$topath=qa_get('to'); // lets user switch between login and register without losing destination page
+			$tourl = isset($topath) ? $topath : qa_path(qa_request(), $_GET, ''); // build our own tourl
+			$params = array(
+				'login' => $key,
+				'to' => $tourl
+			);
+			
+			$url = qa_path('login', $params, qa_path_to_root());
 			$classes = "$context action-login $zocial $key";
 			$title = qa_lang_html_sub('plugin_open/login_using', $this->provider);
 			$text = $this->provider . ' ' . qa_lang_html('main/nav_login');
