@@ -224,10 +224,12 @@ class qa_open_login {
 			$tourl = isset($topath) ? $topath : qa_path(qa_request(), $get, ''); // build our own tourl
 			$params = array(
 				'login' => $key,
-				'to' => $tourl
 			);
 			
 			$url = qa_path('login', $params, qa_path_to_root());
+			if(strlen($tourl) > 0) {
+				$url .= '&amp;to=' . $tourl; // play nice with validators
+			}
 			$classes = "$context action-login $zocial $key";
 			$title = qa_lang_html_sub('plugin_open/login_using', $this->provider);
 			$text = $this->provider . ' ' . qa_lang_html('main/nav_login');
