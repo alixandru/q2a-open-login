@@ -18,7 +18,9 @@
 		margin-top: 4px;
 	}
 	
-	.qa-template-login .qa-body-wrapper a.zocial {
+	.qa-template-login .qa-main a.open-login-button,
+	.qa-template-register .qa-main a.open-login-button {
+		display: inline-block;
 		margin-top: 5px;
 		width: 30%;
 	}

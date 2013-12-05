@@ -71,12 +71,13 @@ Don't edit the string on the left-hand side. Once you've completed the translati
 
 ## Change log ##
 
-**v2.0.3**
+**v2.1.0**
 
 * Change all login URLs to point to `/login` to avoid SEO issues (old login URLs will still work)
 * Correct URL issue with Windows Live provider
 * Fix issue with email which was lost when connecting a new login
-* Code cleanup.
+* Small CSS changes
+* Code cleanup
 
 
 **v2.0.2**
