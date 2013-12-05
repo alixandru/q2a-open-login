@@ -8,7 +8,7 @@
 
 	
 	File: qa-plugin/open-login/qa-open-layer.php
-	Version: 2.0.0
+	Version: 3.0.0
 	Description: Extends current theme with additional functionalities
 
 
@@ -31,9 +31,14 @@ class qa_html_theme_layer extends qa_html_theme_base
 	function doctype() {
 		parent::doctype();
 
+		if(qa_request() == '' && count($_GET) > 0) {
+			// Check if we need to associate another provider
+			$this->process_login();
+		}
+		
 		// first see if the account pages are accessed
 		$tmpl = array( 'account', 'favorites' );
-		$logins_page = qa_request() == 'logins';
+		$logins_page = qa_request() == 'logins' && !qa_get('confirm');
 		
 		if ( in_array($this->template, $tmpl) || $logins_page ) {
 			// add a navigation item
@@ -83,4 +88,26 @@ class qa_html_theme_layer extends qa_html_theme_base
 		}
 	}
 
+	function process_login() {
+		$action = null;
+		$key = null;
+		
+		if( !empty($_REQUEST['hauth_start']) ) {
+			$key = trim(strip_tags($_REQUEST['hauth_start']));
+			$action = 'process';
+			
+		} else if( !empty($_REQUEST['hauth_done']) ) {
+			$key = trim(strip_tags($_REQUEST['hauth_done']));
+			$action = 'process';
+		}
+		
+		if($key == null || $action == null) {
+			return false;
+		}
+		
+		require_once( QA_HTML_THEME_LAYER_URLTOROOT . "Hybrid/Auth.php" );
+		require_once( QA_HTML_THEME_LAYER_URLTOROOT . "Hybrid/Endpoint.php" ); 
+		Hybrid_Endpoint::process();
+	}
+	
 }

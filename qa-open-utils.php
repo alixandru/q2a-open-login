@@ -8,7 +8,7 @@
 
 	
 	File: qa-plugin/open-login/qa-open-utils.php
-	Version: 1.0.0
+	Version: 3.0.0
 	Description: Contains various utility functions used by the plugin
 
 
@@ -26,41 +26,82 @@
 */
 
 
-function qa_db_user_login_find_other__open($userid, $email) {
-	// return all logins with the same email which are not associated with this user
+function qa_db_user_login_find_other__open($userid, $email, $additional = 0) {
+	// return all logins with the same email OR which are not associated with this user
 	// super admins will not be included
 	
-	if(empty($email)) {
+	/* create a hierarchical structure like this: 
+			[id] {
+				details: [data from user table]
+				logins: [multiple records from userlogins table]
+			}
+	*/
+	if(!empty($email))
+		$logins = qa_db_read_all_assoc(qa_db_query_sub(
+			'SELECT us.*, up.points, ul.identifier, ul.source, ul.oemail as uloemail FROM ^users us 
+				LEFT JOIN ^userlogins ul ON us.userid = ul.userid 
+				LEFT JOIN ^userpoints up ON us.userid = up.userid 
+				WHERE (us.oemail=$ OR us.email=$) AND us.level<=$',
+			$email, $email, 100
+		));
+	else if(!empty($userid))
+		$logins = qa_db_read_all_assoc(qa_db_query_sub(
+			'SELECT us.*, up.points, ul.identifier, ul.source, ul.oemail as uloemail FROM ^users us 
+				LEFT JOIN ^userlogins ul ON us.userid = ul.userid 
+				LEFT JOIN ^userpoints up ON us.userid = up.userid 
+				WHERE (us.userid=$ OR us.userid=$) AND us.level<=$',
+			$userid, $additional, 100
+		));
+	else 
 		return array();
+	
+	$ret = array();
+	foreach($logins as $l) {
+		$id = $l['userid'];
+		
+		if(isset($ret[$id])) {
+			$structure = $ret[$id];
+		} else {
+			$structure = array();
+			$structure['logins'] = array();
+			$structure['details'] = array(
+				'userid' => $id,
+				'handle' => $l['handle'],
+				'points' => $l['points'],
+				'email' => $l['email'],
+				'oemail' => $l['oemail'],
+			);
+		}
+		
+		if(!empty($l['identifier'])) {
+			$structure['logins'][] = ucfirst($l['source']); // push this new login
+		}
+		
+		$ret[$id] = $structure;
 	}
-	return qa_db_read_all_assoc(qa_db_query_sub(
-		'SELECT us.*, ul.identifier, ul.source, ul.oemail as uloemail FROM ^users us 
-			LEFT JOIN ^userlogins ul ON us.userid = ul.userid 
-			WHERE (us.oemail=$ OR us.email=$) AND us.userid!=$ AND us.level<$',
-		$email, $email, $userid, 100
-	));
+	
+	return $ret;
 }
 
-function qa_db_user_login_find_mine__open($userid, $srcexcl) {
-	// return all logins associated with this user, with a different session source than the one specified
-	// if no source is specified, simply return all logins associated with this user
-	
-	if(empty($srcexcl)) {
-		return qa_db_read_all_assoc(qa_db_query_sub(
-			'SELECT * FROM ^userlogins WHERE userid=$',
-			$userid
-		));
-		
+function qa_db_user_login_find_duplicate__open($source, $id) {
+	// return the login with the specified source and id
+	$duplicates = qa_db_read_all_assoc(qa_db_query_sub(
+		'SELECT * FROM ^userlogins WHERE source=$ and identifier=$',
+		$source, $id
+	));
+	if(empty($duplicates)) {
+		return null;
 	} else {
-	
-		// the source is in the format [provider]-[id]
-		$parts = explode('-', $srcexcl, 2);
-		$source = $parts[0]; $id = $parts[1] . '%';
-		return qa_db_read_all_assoc(qa_db_query_sub(
-			'SELECT * FROM ^userlogins WHERE userid=$ AND ((source!=$) OR (source=$ AND MD5(identifier) NOT LIKE $))',
-			$userid, $source, $source, $id
-		));
+		return $duplicates[0];
 	}
+}
+
+function qa_db_user_login_find_mine__open($userid) {
+	// return all logins associated with this user
+	return qa_db_read_all_assoc(qa_db_query_sub(
+		'SELECT * FROM ^userlogins WHERE userid=$',
+		$userid
+	));
 }
 
 function qa_db_user_login_set__open($source, $identifier, $field, $value) {
@@ -68,6 +109,14 @@ function qa_db_user_login_set__open($source, $identifier, $field, $value) {
 	qa_db_query_sub(
 		'UPDATE ^userlogins SET '.qa_db_escape_string($field).'=$ WHERE source=$ and identifier=$',
 		$value, $source, $identifier
+	);
+}
+
+function qa_db_user_login_replace_userid__open($olduserid, $newuserid) {
+	// replace the userid in userlogins table
+	qa_db_query_sub(
+		'UPDATE ^userlogins SET userid=$ WHERE userid=$',
+		$newuserid, $olduserid
 	);
 }
 
@@ -94,7 +143,9 @@ function qa_db_user_find_by_email_or_oemail__open($email) {
 function qa_db_user_find_by_id__open($userid) {
 	// Return the user with the specified userid (should return one user or null)
 	$users = qa_db_read_all_assoc(qa_db_query_sub(
-		'SELECT * FROM ^users WHERE userid=$',
+		'SELECT us.*, up.points FROM ^users us 
+		LEFT JOIN ^userpoints up ON us.userid = up.userid 
+		WHERE us.userid=$',
 		$userid
 	));
 	if(empty($users)) {
@@ -112,6 +163,7 @@ function qa_open_login_get_new_source($source, $identifier) {
 	// accounts linked to it)
 	return substr($source, 0, 9) . '-' . substr(md5($identifier), 0, 6);
 }
+
 
 /*
 	Omit PHP closing tag to help avoid accidental output

@@ -8,7 +8,7 @@
 
 	
 	File: qa-plugin/open-login/qa-open-login.php
-	Version: 2.0.0
+	Version: 3.0.0
 	Description: Login module class for handling OpenID/OAuth logins 
 	through HybridAuth library
 
@@ -185,35 +185,35 @@ class qa_open_login {
 
 	
 	function login_html($tourl, $context) {
-		$this->printCode($tourl, false, $context);
+		self::printCode($this->provider, $tourl, $context, 'login');
 	}
 
 	
 	function logout_html($tourl) {
-		$this->printCode($tourl, true, 'menu');
+		self::printCode($this->provider, $tourl, 'menu', 'logout');
 	}
 	
 
-	function printCode($tourl, $logout, $context) {
-		$css = $key = strtolower($this->provider);
+	static function printCode($provider, $tourl, $context, $action = 'login', $print = true) {
+		$css = $key = strtolower($provider);
 		if ($key == 'live') {
 			$css = 'windows'; // translate provider name to zocial css class
 		}
 		$showInHeader = qa_opt("{$key}_app_shortcut") ? true : false;
 		
-		if(!$logout && !$showInHeader && $context == 'menu') {
+		if($action == 'login' && !$showInHeader && $context == 'menu') {
 			// do not show login button in the header for this
 			return;
 		}
 		
 		$zocial = qa_opt('open_login_zocial') == '1' ? 'zocial' : ''; // use zocial buttons
-		if($logout) {
+		if($action == 'logout') {
 			$url = $tourl;
 			$classes = "$context action-logout $zocial $css";
 			$title = qa_lang_html('main/nav_logout');
 			$text = qa_lang_html('main/nav_logout');
 			
-		} else {
+		} else if($action == 'login') {
 			$topath = qa_get('to'); // lets user switch between login and register without losing destination page
 			
 			// clean GET parameters (not performed when to parameter is already passed) 
@@ -231,18 +231,38 @@ class qa_open_login {
 				$url .= '&amp;to=' . $tourl; // play nice with validators
 			}
 			$classes = "$context action-login $zocial $css";
-			$title = qa_lang_html_sub('plugin_open/login_using', $this->provider);
-			$text = $this->provider . ' ' . qa_lang_html('main/nav_login');
+			$title = qa_lang_html_sub('plugin_open/login_using', $provider);
+			$text = $provider . ' ' . qa_lang_html('main/nav_login');
 			
 			if($context != 'menu') {
 				$text = $title;
 			}
+			
+		} else if($action == 'link') {
+			$url = qa_path('logins', array('link' => $key), qa_path_to_root()); // build our own url
+			$classes = "$context action-link $zocial $css";
+			$title = qa_lang_html_sub('plugin_open/login_using', $provider);
+			$text = qa_lang_html('main/nav_login');
+			
+			if($context != 'menu') {
+				$text = $title;
+			}
+			
+		} else if($action == 'view') {
+			$url = 'javascript://';
+			$classes = "$context action-link $zocial $css";
+			$title = $provider;
+			$text = $tourl;
 		}
 		
-?>
-  <a class="open-login-button context-<?php echo $classes ?>" title="<?php echo $title;?>" href="<?php echo $url ?>" rel="nofollow"><?php echo $text ?></a>
-<?php
-	
+		$html = <<<HTML
+  <a class="open-login-button context-$classes" title="$title" href="$url" rel="nofollow">$text</a>
+HTML;
+		if($print) {
+			echo $html;
+		} else {
+			return $html;
+		}
 	}
 	
 	

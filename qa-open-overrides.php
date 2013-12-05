@@ -8,7 +8,7 @@
 
 	
 	File: qa-plugin/open-login/qa-open-overrides.php
-	Version: 1.0.0
+	Version: 3.0.0
 	Description: Overrides the core login functionality
 
 
@@ -71,6 +71,8 @@ function qa_log_in_external_user($source, $identifier, $fields)
 	
 	$users=qa_db_user_login_find($source, $identifier);
 	$countusers=count($users);
+	if ($countusers>1)
+		qa_fatal_error('External login mapped to more than one user'); // should never happen
 	
 	/*
 	 * To allow for more than one account from the same openid/openauth provider to be 
@@ -82,13 +84,25 @@ function qa_log_in_external_user($source, $identifier, $fields)
 	
 	$aggsource = qa_open_login_get_new_source($source, $identifier);
 	
-	if ($countusers>1)
-		qa_fatal_error('External login mapped to more than one user'); // should never happen
+	// prepare some data
+	if(empty($fields['handle'])) {
+		$ohandle = ucfirst($source);
+	} else {
+		$ohandle = preg_replace('/[\\@\\+\\/]/', ' ', $fields['handle']);
+	}
+	$oemail = null;
+	if (strlen(@$fields['email']) && $fields['confirmed']) { // only if email is confirmed
+		$oemail = $fields['email'];
+	}
 	
-	if ($countusers) // user exists so log them in
+	if ($countusers) { // user exists so log them in
+		//always update email and handle
+		if($oemail) qa_db_user_login_set__open($source, $identifier, 'oemail', $oemail);
+		qa_db_user_login_set__open($source, $identifier, 'ohandle', $ohandle);
+		
 		qa_set_logged_in_user($users[0]['userid'], $users[0]['handle'], $remember, $aggsource);
 	
-	else { // create and log in user
+	} else { // create and log in user
 		require_once QA_INCLUDE_DIR.'qa-app-users-edit.php';
 		
 		qa_db_user_login_sync(true);
@@ -96,17 +110,19 @@ function qa_log_in_external_user($source, $identifier, $fields)
 		$users=qa_db_user_login_find($source, $identifier); // check again after table is locked
 		
 		if (count($users)==1) {
+			//always update email and handle
+			if($oemail) qa_db_user_login_set__open($source, $identifier, 'oemail', $oemail);
+			qa_db_user_login_set__open($source, $identifier, 'ohandle', $ohandle);
+			
 			qa_db_user_login_sync(false);
 			qa_set_logged_in_user($users[0]['userid'], $users[0]['handle'], $remember, $aggsource);
-		
+			
 		} else {
 			$handle=qa_handle_make_valid(@$fields['handle']);
-		
+
 			// check if email address already exists
-			$oemail = null;
 			$emailusers = array();
 			if (strlen(@$fields['email']) && $fields['confirmed']) { // only if email is confirmed
-				$oemail = $fields['email'];
 				$emailusers=qa_db_user_find_by_email_or_oemail__open($fields['email']);
 				
 				if (count($emailusers)) {
@@ -121,6 +137,7 @@ function qa_log_in_external_user($source, $identifier, $fields)
 			qa_db_user_set($userid, 'oemail', $oemail);
 			qa_db_user_login_add($userid, $source, $identifier);
 			qa_db_user_login_set__open($source, $identifier, 'oemail', $oemail);
+			qa_db_user_login_set__open($source, $identifier, 'ohandle', $ohandle);
 			qa_db_user_login_sync(false);
 			
 			$profilefields=array('name', 'location', 'website', 'about');

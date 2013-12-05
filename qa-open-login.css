@@ -1,16 +1,22 @@
 
 	/* Open Login buttons */
+	.open-login-button.context-associate,
+	.open-login-button.context-login,
+	.open-login-button.context-register {
+		font-weight: bold;
+		display: inline-block;
+		margin-top: 5px;
+		width: 30%;
+	}
+
 	.open-login-button.context-menu.zocial {
 		margin-top: -4px;
 		font-size: 11px;
 	}
 	
-	.open-login-button.context-login, .open-login-button.context-register {
-		font-weight: bold;
-	}
-	
-	.open-login-profile, .open-login-accounts {
-		padding-bottom: 20px;
+	.open-login-profile, .open-login-accounts, .open-login-others {
+		padding-bottom: 40px;
+		border-bottom: 1px solid gray;
 	}
 	
 	.qa-nav-user { /* this should not have negative effects */
@@ -18,10 +24,21 @@
 		margin-top: 4px;
 	}
 	
-	.qa-template-login .qa-main a.open-login-button,
-	.qa-template-register .qa-main a.open-login-button {
+	.open-login-others .opacxhtml select {
+		margin: 5px 0;
+	}
+	
+	.open-login-others .opacxhtml {
+		padding-left: 35px;
+	}
+	
+	.open-login-accounts a.opacxdel:hover {
+		text-decoration: none;
+	}
+	
+	.open-login-accounts a.opacxdel{
 		display: inline-block;
-		margin-top: 5px;
-		width: 30%;
+		line-height: 25px;
+		margin: 0 5px;
 	}
 	/* End of Open Login buttons */

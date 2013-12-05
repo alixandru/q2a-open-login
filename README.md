@@ -8,7 +8,7 @@ This is a plugin for **Question2Answer** that allows users to log in via Faceboo
 ## Description ##
 This is an extension of the Facebook Login plugin, to which it adds additional login providers. It is based on [HybridAuth](http://hybridauth.sourceforge.net/) library which acts as a middleware between the plugin and a wide range of OAuth and OpenID service providers. For this reason, it is possible to add any identity provider supported by HybridAuth to your Q2A installation with virtually no effort.
 
-The plugin also offers the ability to link multiple OpenID/OAuth-powered logins to a Q2A user account, allowing users to log in to the same account via multiple providers. For example, an user might link his or her Facebook and Google accounts to the Q2A user account and then log in to the Q2A site through any of the 3 methods (Q2A login page, Facebook OAuth or Google OpenID).
+The plugin also offers the ability to link multiple OpenID/OAuth-powered logins to a Q2A user account, allowing users to log in to the same account via multiple providers. For example, an user might link his or her Facebook and Google accounts to the Q2A user account and then log in to the Q2A site through any of the 3 methods (Q2A login page, Facebook or Google).
 
 
 ## Installation ##
@@ -20,10 +20,11 @@ The plugin also offers the ability to link multiple OpenID/OAuth-powered logins 
      `git clone git://github.com/alixandru/q2a-open-login.git open-login`
    - To download directly, go to the [project page][Github] and click **Download ZIP**
 
+* Copy the plugin folder to `qa-plugin` directory. It is recommended to remove the Facebook Login plugin that ships with Q2A.
 * Go to **Admin -> Plugins** on your Q2A installation and enable the providers which you would like to use. For all OAuth-based providers (all, except Google and Yahoo, which use OpenID) you need to provide some keys after you register your application with them. See [HybridAuth documentation](http://hybridauth.sourceforge.net/userguide.html) for information about what is needed for each provider.
 * Optionally, add the contents of the *qa-open-login.css* file to your theme's CSS file and select the option **Don't inline CSS** from the **Open Login Configuration** section on the **Admin -> Plugins** page. You can also enable stylish CSS icons for the login links (through the *Zocial* pack), in which case you need to perform an extra step: manually modify the theme's CSS file to import `zocial.css` file (usually by adding `@import url('/path-to-q2a/qa-plugin/q2a-open-login/css/zocial.css');` at the top of the file). Please note that, according to the URL of your Q2A instance, you might need to adjust the paths in the CSS file. 
 
-Note: this plugin requires some database changes: a column called `oemail` (original email) will be added to the tables `qa_users` and `qa_user_logins`. These columns will store the email associated with the OpenID/OAuth accounts when the users log in through any OpenID/OAuth provider. These emails will then be used to determine if there are accounts which can be linked together. The database changes will be performed when the administration page is accessed for the first time after the plugin is installed or upgraded. This is a one-time-only operation and it should not affect your existing data in any way.
+Note: this plugin requires some database changes: a column called `oemail` (original email) will be added to `qa_users` table, and two columns called `oemail` and `ohandle` (original handle) will be added to `qa_user_logins` table. These columns will store the email and name associated with the OpenID/OAuth accounts when the users log in through any external provider. These emails from `oemail` fields will then be used to determine if there are accounts which can be linked together. The database changes will be performed when the administration page is accessed for the first time after the plugin is installed or upgraded. This is a one-time-only operation and it should not affect your existing data in any way.
 
   [Question2Answer]: http://www.question2answer.org/install.php
   [Git]: http://git-scm.com/
@@ -52,6 +53,8 @@ If something happens with the login process and authentication cannot be done, t
     6 : User profile request failed. Most likely the user is not connected to the provider and he should authenticate again.
     7 : User not connected to the provider.
     8 : Provider does not support this feature.
+    98 : The merge has already been performed and there are no more accounts to connect.
+    99 : The external login could not be linked with current account because it is already connected with another administrator account.
 
 
 
@@ -70,6 +73,17 @@ Don't edit the string on the left-hand side. Once you've completed the translati
 
 
 ## Change log ##
+
+**v3.0.0**
+
+* Change how duplicate accounts are displayed and linked together to make the process more straight-forward and to favour for less duplicates. Users are now forced to merge the entire user account, not just a login method. This approach simplifies both the business logic and the technical implementation. No additional work is necessary to get the new process working and existing users will not be impacted (no need to migrate anything).
+* Implement the ability to specify what account to keep when merging duplicate accounts.
+* Implement the ability to arbitrarily associate external logins with current account.
+* Improved the layout of the `logins` page.
+* Update CSS file. The rules must be manually updated if a custom theme is used.
+
+Note: due to massive translation changes, the Russian translation file has been removed.
+
 
 **v2.1.0**
 
