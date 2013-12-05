@@ -109,9 +109,12 @@ class qa_open_logins_page {
 		}
 		
 		if (qa_clicked('docancel')) {
+			$conf = qa_post_text('confirm');
 			$tourl = qa_post_text('to');
 			if(!empty($tourl)) {
 				qa_redirect($tourl);
+			} else {
+				qa_redirect($conf ? '' : 'logins'); // redirect to homepage or logins page
 			}
 		}
 		
@@ -179,8 +182,10 @@ class qa_open_logins_page {
 			
 			$conf = qa_post_text('confirm');
 			$tourl = qa_post_text('to');
-			if($conf && !empty($tourl)) {
+			if(!empty($tourl)) {
 				qa_redirect($tourl);
+			} else {
+				qa_redirect($conf ? '' : 'logins'); // redirect to homepage or logins page
 			}
 			
 			// update the array
