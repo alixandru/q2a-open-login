@@ -1,0 +1,1 @@
+<?php /* this file will be rewritten when the plugin configuration is updated, therefore it must be write-accessible */

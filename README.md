@@ -14,6 +14,7 @@ The plugin also offers the ability to link multiple OpenID/OAuth-powered logins 
 ## Installation ##
 
 * Install [Question2Answer][]. This plugin requires at least version 1.6 (see the change log for details)
+* Make sure the [cURL][] extension is installed and enabled in PHP. HybridAuth library requires cURL to be enabled and the plugin will not work properly without this extension.
 * Get the source code for this plugin from [Github][], either using [Git][], or downloading directly:
 
    - To download using git, install git and then type 
@@ -21,30 +22,41 @@ The plugin also offers the ability to link multiple OpenID/OAuth-powered logins 
    - To download directly, go to the [project page][Github] and click **Download ZIP**
 
 * Copy the plugin folder to `qa-plugin` directory. It is recommended to remove the Facebook Login plugin that ships with Q2A.
-* Go to **Admin -> Plugins** on your Q2A installation and enable the providers which you would like to use. For all OAuth-based providers (all, except Google and Yahoo, which use OpenID) you need to provide some keys after you register your application with them. See [HybridAuth documentation](http://hybridauth.sourceforge.net/userguide.html) for information about what is needed for each provider.
-* Optionally, add the contents of the *qa-open-login.css* file to your theme's CSS file and select the option **Don't inline CSS** from the **Open Login Configuration** section on the **Admin -> Plugins** page. You can also enable stylish CSS icons for the login links (through the *Zocial* pack), in which case you need to perform an extra step: manually modify the theme's CSS file to import `zocial.css` file (usually by adding `@import url('/path-to-q2a/qa-plugin/q2a-open-login/css/zocial.css');` at the top of the file). Please note that, according to the URL of your Q2A instance, you might need to adjust the paths in the CSS file. 
+* Rename the file `providers-sample.php` to `providers.php` and make it write-accessible to the user under which the web-server is running. The plugin code must be able to write to this file.
 
-Note: this plugin requires some database changes: a column called `oemail` (original email) will be added to `qa_users` table, and two columns called `oemail` and `ohandle` (original handle) will be added to `qa_user_logins` table. These columns will store the email and name associated with the OpenID/OAuth accounts when the users log in through any external provider. These emails from `oemail` fields will then be used to determine if there are accounts which can be linked together. The database changes will be performed when the administration page is accessed for the first time after the plugin is installed or upgraded. This is a one-time-only operation and it should not affect your existing data in any way.
+
+## Configuration ##
+
+* Go to **Admin -> Plugins** on your Q2A installation and enable the providers which you would like to use. For all OAuth-based providers (all, except Google and Yahoo, which use OpenID) you need to provide some keys after you register your application with them. See [HybridAuth documentation](http://hybridauth.sourceforge.net/userguide.html) for information about what is needed for each provider.
+* Optionally, add the contents of the *qa-open-login.css* file to your theme's CSS file and select the option **Don't inline CSS** from the **Open Login Configuration** section on the **Admin -> Plugins** page. 
+* Optionally, enable stylish CSS icons for the login links (through the *Zocial* pack) by selecting the option **Use Zocial buttons** from the **Open Login Configuration** section on the **Admin -> Plugins** page. In case you are using a custom theme, you need to perform an extra step: manually modify the theme's CSS file to import `zocial.css` file (usually by adding `@import url('/path-to-q2a/qa-plugin/q2a-open-login/css/zocial.css');` at the top of the file). Please note that, according to the URL of your Q2A instance, you might need to adjust the paths in the CSS file. 
+
+
+Notes: 
+
+1. this plugin requires some database changes: a column called `oemail` (original email) will be added to `qa_users` table, and two columns called `oemail` and `ohandle` (original handle) will be added to `qa_user_logins` table. These columns will store the email and name associated with the OpenID/OAuth accounts when the users log in through any external provider. These emails from `oemail` fields will then be used to determine if there are accounts which can be linked together. The database changes will be performed when the administration page is accessed for the first time after the plugin is installed or upgraded. This is a one-time-only operation and it should not affect your existing data in any way.
+2. Every time you save the configuration of the plugin in the administration page, the file `providers.php` is rewritten with the list of providers that are enabled. This list is then used during plugin initialization, when access to the database is restricted by the Q2A code (see `qa-plugin.php` for details). If the plugin cannot update this file, the list of active providers will be considered empty, no matter what is configured in the administration page, so users will not be able to log in using any service. This is why it is important for the plugin code to have write access to this file.
 
   [Question2Answer]: http://www.question2answer.org/install.php
   [Git]: http://git-scm.com/
   [Github]: https://github.com/alixandru/q2a-open-login
+  [cURL]: http://www.php.net/manual/en/book.curl.php
 
 
 
-## Adding new login providers ##
+### Adding new login providers ###
 
 Since this plugin is based on [HybridAuth](http://hybridauth.sourceforge.net/), you can easily add new login providers to your Q2A site. All you need to do is to add the provider PHP file to the `Hybrid/Providers` folder and configure it from the Administration page. That's it! 
 
 
 
-## Handling login errors ##
+### Handling login errors ###
 
 Whenever a login attempt fails, the user will be redirected to the original page but no error message will be displayed. This is to save end-users from technical error messages which would not help them much anyway. If you instead would like to show an error message, you can do that through a layer or a custom theme. 
 
 If something happens with the login process and authentication cannot be done, the user will be redirected to a page whose URL follows the following pattern: `yoursite.com/?provider=X&code=0`. The custom layer or theme could check if the two parameters are present in the URL and display an error message based on the code number. The descriptions of the error codes are below.
 
-    0 : Unspecified error.
+    0 : Unspecified error. Most likely Hybridauth is not correctly installed (perhaps cURL extension not enabled).
     1 : Hybriauth configuration error.
     2 : Provider not properly configured.
     3 : Unknown or disabled provider.
@@ -60,15 +72,9 @@ If something happens with the login process and authentication cannot be done, t
 
 ## Translation ##
 
-The translation file is **qa-open-lang-default.php**.  Copy this file to the same directory and change the **"default"** part of the filename to your language code. Edit the right-hand side strings in this file, for example, changing:
+The translation file is **qa-open-lang-default.php**.  Copy this file to the same directory and change the **"default"** part of the filename to your language code. Edit the right-hand side strings in this file, for example, changing: `'my_logins_title'=>'My logins',` to `'my_logins_title'=>'Mes comptes',`
 
-**`'my_logins_title'=>'My logins',`**
-
-to
-
-**`'my_logins_title'=>'Mes comptes',`**
-
-Don't edit the string on the left-hand side. Once you've completed the translation, don't forget to set the site language in the admin control panel. Translations for Romanian are also included.  
+Don't edit the string on the left-hand side. Once you've completed the translation, don't forget to set the site language in the admin control panel. Translations for Romanian are also included.
 
 
 
