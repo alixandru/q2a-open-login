@@ -105,7 +105,7 @@ class qa_open_logins_page {
 		$tolink = $this->check_associate($useraccount);
 		
 		//  Check if we're merging multiple accounts
-		$otherlogins = $this->check_merge($useraccount, $tolink);
+		$otherlogins = $this->check_merge($useraccount, $mylogins, $tolink);
 		
 		//	Prepare content for theme
 		$disp_conf = qa_get('confirm') || !empty($tolink);
@@ -159,7 +159,7 @@ class qa_open_logins_page {
 		}
 	}
 	
-	function check_merge(&$useraccount, $tolink) {
+	function check_merge(&$useraccount, &$mylogins, $tolink) {
 		global $qa_cached_logged_in_user, $qa_logged_in_userid_checked;
 		
 		$userid = $findid = $useraccount['userid'];
@@ -264,8 +264,9 @@ class qa_open_logins_page {
 				}
 			}
 			
-			// update the array
+			// update the arrays
 			$otherlogins = qa_db_user_login_find_other__open($userid, $findemail);
+			$mylogins = qa_db_user_login_find_mine__open($userid);
 		}
 		
 		// remove the current user id
