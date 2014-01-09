@@ -71,6 +71,15 @@ Don't edit the string on the left-hand side. Once you've completed the translati
 
 ## Change log ##
 
+**v3.0.0 (unreleased)** - see [development](https://github.com/alixandru/q2a-open-login/tree/development) branch.
+
+
+**v2.1.1**
+
+* Add Spanish translation, contributed by [jorpcolombia](https://github.com/jorpcolombia)
+* Fix Yahoo OpenID issue with PHP 5.5.3+ / cURL 7.32.0+
+
+
 **v2.1.0**
 
 * Change all login URLs to point to `/login` to avoid SEO issues (old login URLs will still work)
