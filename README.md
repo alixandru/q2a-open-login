@@ -14,7 +14,7 @@ The plugin also offers the ability to link multiple OpenID/OAuth-powered logins 
 ## Installation ##
 
 * Install [Question2Answer][]. This plugin requires at least version 1.6 (see the change log for details)
-* Make sure the [cURL][] extension is installed and enabled in PHP. HybridAuth library requires cURL to be enabled and the plugin will not work properly without this extension.
+* Make sure the [cURL][] and [JSON][] extensions are installed and enabled in PHP. HybridAuth library requires these extensions in order to work properly.
 * Get the source code for this plugin from [Github][], either using [Git][], or downloading directly:
 
    - To download using git, install git and then type 
@@ -41,6 +41,7 @@ Notes:
   [Git]: http://git-scm.com/
   [Github]: https://github.com/alixandru/q2a-open-login
   [cURL]: http://www.php.net/manual/en/book.curl.php
+  [JSON]: http://www.php.net/manual/en/book.json.php
 
 
 
