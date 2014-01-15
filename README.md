@@ -6,7 +6,7 @@ This is a plugin for **Question2Answer** that allows users to log in via Faceboo
 
 
 ## Description ##
-This is an extension of the Facebook Login plugin, to which it adds additional login providers. It is based on [HybridAuth](http://hybridauth.sourceforge.net/) library which acts as a middleware between the plugin and a wide range of OAuth and OpenID service providers. For this reason, it is possible to add any identity provider supported by HybridAuth to your Q2A installation with virtually no effort.
+This is an extension of the Facebook Login plugin, to which it adds a broad range of additional login providers. It is based on [HybridAuth](http://hybridauth.sourceforge.net/) library which acts as a middleware between the plugin and a wide range of OAuth and OpenID service providers. For this reason, it is possible to add any identity provider supported by HybridAuth to your Q2A installation with virtually no effort.
 
 The plugin also offers the ability to link multiple OpenID/OAuth-powered logins to a Q2A user account, allowing users to log in to the same account via multiple providers. For example, an user might link his or her Facebook and Google accounts to the Q2A user account and then log in to the Q2A site through any of the 3 methods (Q2A login page, Facebook or Google).
 
@@ -18,8 +18,10 @@ The plugin also offers the ability to link multiple OpenID/OAuth-powered logins 
 * Get the source code for this plugin from [Github][], either using [Git][], or downloading directly:
 
    - To download using git, install git and then type 
-     `git clone git://github.com/alixandru/q2a-open-login.git open-login`
-   - To download directly, go to the [project page][Github] and click **Download ZIP**
+      
+      `git clone git://github.com/alixandru/q2a-open-login.git open-login`
+      
+   - To download directly, go to the [project page][Github] and click **[Download ZIP][download]**
 
 * Copy the plugin folder to `qa-plugin` directory. It is recommended to remove the Facebook Login plugin that ships with Q2A.
 * Rename the file `providers-sample.php` to `providers.php` and make it write-accessible to the user under which the web-server is running. The plugin code must be able to write to this file.
@@ -32,7 +34,7 @@ The plugin also offers the ability to link multiple OpenID/OAuth-powered logins 
 * Optionally, enable stylish CSS icons for the login links (through the *Zocial* pack) by selecting the option **Use Zocial buttons** from the **Open Login Configuration** section on the **Admin -> Plugins** page. In case you are using a custom theme, you need to perform an extra step: manually modify the theme's CSS file to import `zocial.css` file (usually by adding `@import url('/path-to-q2a/qa-plugin/q2a-open-login/css/zocial.css');` at the top of the file). Please note that, according to the URL of your Q2A instance, you might need to adjust the paths in the CSS file. 
 
 
-Notes: 
+### Technical notes ###
 
 1. this plugin requires some database changes: a column called `oemail` (original email) will be added to `qa_users` table, and two columns called `oemail` and `ohandle` (original handle) will be added to `qa_user_logins` table. These columns will store the email and name associated with the OpenID/OAuth accounts when the users log in through any external provider. These emails from `oemail` fields will then be used to determine if there are accounts which can be linked together. The database changes will be performed when the administration page is accessed for the first time after the plugin is installed or upgraded. This is a one-time-only operation and it should not affect your existing data in any way.
 2. Every time you save the configuration of the plugin in the administration page, the file `providers.php` is rewritten with the list of providers that are enabled. This list is then used during plugin initialization, when access to the database is restricted by the Q2A code (see `qa-plugin.php` for details). If the plugin cannot update this file, the list of active providers will be considered empty, no matter what is configured in the administration page, so users will not be able to log in using any service. This is why it is important for the plugin code to have write access to this file.
@@ -42,7 +44,7 @@ Notes:
   [Github]: https://github.com/alixandru/q2a-open-login
   [cURL]: http://www.php.net/manual/en/book.curl.php
   [JSON]: http://www.php.net/manual/en/book.json.php
-
+  [download]: https://github.com/alixandru/q2a-open-login/archive/master.zip
 
 
 ### Adding new login providers ###
@@ -83,13 +85,19 @@ Don't edit the string on the left-hand side. Once you've completed the translati
 
 **v3.0.0**
 
-* Change how duplicate accounts are displayed and linked together to make the process more straight-forward and to favour for less duplicates. Users are now forced to merge the entire user account, not just a login method. This approach simplifies both the business logic and the technical implementation. No additional work is necessary to get the new process working and existing users will not be impacted (no need to migrate anything).
+* Change how duplicate accounts are displayed and linked together to make the process more straight-forward and to favor for less duplicates. Users are now forced to merge the entire user account, not just a login method. This approach simplifies both the business logic and the technical implementation. No additional work is necessary to get the new process working and existing users will not be impacted (no need to migrate anything).
 * Implement the ability to specify what account to keep when merging duplicate accounts.
 * Implement the ability to arbitrarily associate external logins with current account.
 * Improved the layout of the `logins` page.
-* Update CSS file. The rules must be manually updated if a custom theme is used.
+* Update CSS file. Important! If a custom theme is used it must be manually updated.
 
-Note: due to massive translation changes, the Russian translation file has been removed.
+Note: due to massive translation changes, the Russian and Spanish translation files have been removed.
+
+
+**v2.1.1**
+
+* Add Spanish translation, contributed by [jorpcolombia](https://github.com/jorpcolombia)
+* Fix Yahoo OpenID issue with PHP 5.5.3+ / cURL 7.32.0+
 
 
 **v2.1.0**

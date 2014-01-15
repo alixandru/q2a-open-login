@@ -1,17 +1,15 @@
 <?php
-// https://github.com/iignatov/LightOpenID
-
 /**
  * This class provides a simple interface for OpenID 1.1/2.0 authentication.
  * 
  * It requires PHP >= 5.1.2 with cURL or HTTP/HTTPS stream wrappers enabled.
  *
- * @version v1.1.2 2013-01-15
- * @link http://gitorious.org/lightopenid Official Repo
- * @link http://github.com/iignatov/LightOpenID GitHub Clone
- * @author Mewp
- * @copyright Copyright (c) 2010, Mewp
- * @license http://www.opensource.org/licenses/mit-license.php MIT License
+ * @version     v1.2.0 (2014-01-14)
+ * @link        https://code.google.com/p/lightopenid/          Project URL
+ * @link        https://github.com/iignatov/LightOpenID         GitHub Repo
+ * @author      Mewp <mewp151 at gmail dot com>
+ * @copyright   Copyright (c) 2013 Mewp
+ * @license     http://opensource.org/licenses/mit-license.php  MIT License
  */
 class LightOpenID
 {
@@ -21,11 +19,13 @@ class LightOpenID
          , $verify_peer = null
          , $capath = null
          , $cainfo = null
+         , $cnmatch = null
          , $data
          , $oauth = array();
     private $identity, $claimed_id;
     protected $server, $version, $trustRoot, $aliases, $identifier_select = false
-            , $ax = false, $sreg = false, $setup_url = null, $headers = array(), $proxy = null
+            , $ax = false, $sreg = false, $setup_url = null, $headers = array()
+            , $proxy = null, $user_agent = 'LightOpenID'
             , $xrds_override_pattern = null, $xrds_override_replacement = null;
     static protected $ax_to_sreg = array(
         'namePerson/friendly'     => 'nickname',
@@ -41,18 +41,7 @@ class LightOpenID
 
     function __construct($host, $proxy = null)
     {
-        $this->trustRoot = (strpos($host, '://') ? $host : 'http://' . $host);
-        if ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off')
-            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])
-            && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')
-        ) {
-            $this->trustRoot = (strpos($host, '://') ? $host : 'https://' . $host);
-        }
-
-        if(($host_end = strpos($this->trustRoot, '/', 8)) !== false) {
-            $this->trustRoot = substr($this->trustRoot, 0, $host_end);
-        }
-        
+        $this->set_realm($host);
         $this->set_proxy($proxy);
 
         $uri = rtrim(preg_replace('#((?<=\?)|&)openid\.[^&]+#', '', $_SERVER['REQUEST_URI']), '?');
@@ -63,6 +52,11 @@ class LightOpenID
         if(!function_exists('curl_init') && !in_array('https', stream_get_wrappers())) {
             throw new ErrorException('You must have either https wrappers or curl enabled.');
         }
+    }
+    
+    function __isset($name)
+    {
+        return in_array($name, array('identity', 'trustRoot', 'realm', 'xrdsOverride', 'mode'));
     }
 
     function __set($name, $value)
@@ -159,6 +153,35 @@ class LightOpenID
 
         return !!gethostbynamel($server);
     }
+    
+    protected function set_realm($uri)
+    {
+        $realm = '';
+        
+        # Set a protocol, if not specified.
+        $realm .= (($offset = strpos($uri, '://')) === false) ? $this->get_realm_protocol() : '';
+        
+        # Set the offset properly.
+        $offset = (($offset !== false) ? $offset + 3 : 0);
+        
+        # Get only the root, without the path.
+        $realm .= (($end = strpos($uri, '/', $offset)) === false) ? $uri : substr($uri, 0, $end);
+        
+        $this->trustRoot = $realm;
+    }
+    
+    protected function get_realm_protocol()
+    {
+        if (!empty($_SERVER['HTTPS'])) {
+            $use_secure_protocol = ($_SERVER['HTTPS'] != 'off');
+        } else if (isset($_SERVER['HTTP_X_FORWARDED_PROTO'])) {
+            $use_secure_protocol = ($_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https');
+        } else {
+            $use_secure_protocol = false;
+        }
+        
+        return $use_secure_protocol ? 'https://' : 'http://';
+    }
 
     protected function request_curl($url, $method='GET', $params=array(), $update_claimed_id)
     {
@@ -166,9 +189,15 @@ class LightOpenID
         $curl = curl_init($url . ($method == 'GET' && $params ? '?' . $params : ''));
         curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($curl, CURLOPT_USERAGENT, $this->user_agent);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/xrds+xml, */*'));
+        
+        if ($method == 'POST') {
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-type: application/x-www-form-urlencoded'));
+        } else {
+            curl_setopt($curl, CURLOPT_HTTPHEADER, array('Accept: application/xrds+xml, */*'));
+        }
         
         if (!empty($this->proxy)) {
             curl_setopt($curl, CURLOPT_PROXY, $this->proxy['host']);
@@ -229,17 +258,10 @@ class LightOpenID
             }
 
             if($update_claimed_id) {
-                # Updating claimed_id in case of redirections.
+                # Update the claimed_id value in case of redirections.
                 $effective_url = curl_getinfo($curl, CURLINFO_EFFECTIVE_URL);
-
-                $url_parts = parse_url($url);
-                $effective_url_parts = parse_url($effective_url);
-
-                // some versions of cURL don't handle fragments well, so ignore them
-                unset($url_parts['fragment']);
-                unset($effective_url_parts['fragment']);
-
-                if($effective_url_parts != $url_parts) {
+                # Ignore the fragment (some cURL versions don't handle it well).
+                if (strtok($effective_url, '#') != strtok($url, '#')) {
                     $this->identity = $this->claimed_id = $effective_url;
                 }
             }
@@ -293,6 +315,10 @@ class LightOpenID
         if(!$this->hostExists($url)) {
             throw new ErrorException("Could not connect to $url.", 404);
         }
+        
+        if (empty($this->cnmatch)) {
+            $this->cnmatch = parse_url($url, PHP_URL_HOST);
+        }
 
         $params = http_build_query($params, '', '&');
         switch($method) {
@@ -301,10 +327,12 @@ class LightOpenID
                 'http' => array(
                     'method' => 'GET',
                     'header' => 'Accept: application/xrds+xml, */*',
+                    'user_agent' => $this->user_agent,
                     'ignore_errors' => true,
-                ), 'ssl' => array(
-                    'CN_match' => parse_url($url, PHP_URL_HOST),
                 ),
+                'ssl' => array(
+                    'CN_match' => $this->cnmatch
+                )
             );
             $url = $url . ($params ? '?' . $params : '');
             if (!empty($this->proxy)) {
@@ -316,11 +344,13 @@ class LightOpenID
                 'http' => array(
                     'method' => 'POST',
                     'header'  => 'Content-type: application/x-www-form-urlencoded',
+                    'user_agent' => $this->user_agent,
                     'content' => $params,
                     'ignore_errors' => true,
-                ), 'ssl' => array(
-                    'CN_match' => parse_url($url, PHP_URL_HOST),
                 ),
+                'ssl' => array(
+                    'CN_match' => $this->cnmatch
+                )
             );
             if (!empty($this->proxy)) {
                 $opts['http']['proxy'] = $this->proxy_url();
@@ -340,6 +370,7 @@ class LightOpenID
             $default['http'] += array(
                 'method' => 'GET',
                 'header' => '',
+                'user_agent' => '',
                 'ignore_errors' => false
             );
             $default['ssl'] += array(
@@ -350,10 +381,11 @@ class LightOpenID
                 'http' => array(
                     'method' => 'HEAD',
                     'header' => 'Accept: application/xrds+xml, */*',
+                    'user_agent' => $this->user_agent,
                     'ignore_errors' => true,
                 ),
                 'ssl' => array(
-                    'CN_match' => parse_url($url, PHP_URL_HOST)
+                    'CN_match' => $this->cnmatch
                 )
             );
             
@@ -417,12 +449,29 @@ class LightOpenID
 
     protected function request($url, $method='GET', $params=array(), $update_claimed_id=false)
     {
-        if (function_exists('curl_init')
-            && (!in_array('https', stream_get_wrappers()) || !ini_get('safe_mode') && !ini_get('open_basedir'))
-        ) {
-            return $this->request_curl($url, $method, $params, $update_claimed_id);
+        $use_curl = false;
+        
+        if (function_exists('curl_init')) {
+            if (!$use_curl) {
+                # When allow_url_fopen is disabled, PHP streams will not work.
+                $use_curl = !ini_get('allow_url_fopen');
+            }
+            
+            if (!$use_curl) {
+                # When there is no HTTPS wrapper, PHP streams cannott be used.
+                $use_curl = !in_array('https', stream_get_wrappers());
+            }
+            
+            if (!$use_curl) {
+                # With open_basedir or safe_mode set, cURL can't follow redirects.
+                $use_curl = !(ini_get('safe_mode') || ini_get('open_basedir'));
+            }
         }
-        return $this->request_streams($url, $method, $params, $update_claimed_id);
+        
+        return
+            $use_curl
+                ? $this->request_curl($url, $method, $params, $update_claimed_id)
+                : $this->request_streams($url, $method, $params, $update_claimed_id);
     }
     
     protected function proxy_url()
@@ -517,14 +566,7 @@ class LightOpenID
                     $next = true;
                 }
 
-                if (isset($headers['content-type'])
-                    && (strpos($headers['content-type'], 'application/xrds+xml') !== false
-                        || strpos($headers['content-type'], 'text/xml') !== false)
-                ) {
-                    # Apparently, some providers return XRDS documents as text/html.
-                    # While it is against the spec, allowing this here shouldn't break
-                    # compatibility with anything.
-                    # ---
+                if (isset($headers['content-type']) && $this->is_allowed_type($headers['content-type'])) {
                     # Found an XRDS document, now let's find the server, and optionally delegate.
                     $content = $this->request($url, 'GET');
 
@@ -628,6 +670,21 @@ class LightOpenID
             throw new ErrorException("No OpenID Server found at $url", 404);
         }
         throw new ErrorException('Endless redirection!', 500);
+    }
+    
+    protected function is_allowed_type($content_type) {
+        # Apparently, some providers return XRDS documents as text/html.
+        # While it is against the spec, allowing this here shouldn't break
+        # compatibility with anything.
+        $allowed_types = array('application/xrds+xml', 'text/html', 'text/xml');
+        
+        foreach ($allowed_types as $type) {
+            if (strpos($content_type, $type) !== false) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     protected function sregParams()
