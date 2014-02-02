@@ -31,38 +31,47 @@ class qa_html_theme_layer extends qa_html_theme_base
 	function doctype() {
 		parent::doctype();
 
-		if(qa_request() == '' && count($_GET) > 0) {
-			// Check if we need to associate another provider
-			$this->process_login();
-		}
+		// check if logged in
+		$userid = qa_get_logged_in_userid();
+		if (isset($userid)) {
 		
-		// first see if the account pages are accessed
-		$tmpl = array( 'account', 'favorites' );
-		$logins_page = qa_request() == 'logins' && !qa_get('confirm');
-		
-		if ( in_array($this->template, $tmpl) || $logins_page ) {
-			// add a navigation item
-			$this->content['navigation']['sub']['logins'] = array(
-				'label' => qa_lang_html('plugin_open/my_logins_nav'),
-				'url' => qa_path_html('logins'),
-				'selected' => $logins_page
-			);
-			return;
-		}
-		
-		// then check if login/register pages are accessed
-		$tmpl = array( 'register', 'login' );
-		if ( !in_array($this->template, $tmpl) ) {
-			return;
-		}
-
-		// add some custom text
-		if(!empty($this->content['custom'])) {
-			$title = qa_lang_html('plugin_open/login_title');
-			$descr = qa_lang_html('plugin_open/login_description');
-			$content = str_replace('<BR>', '', $this->content['custom']);
+			if(qa_request() == '' && count($_GET) > 0) {
+				// Check if we need to associate another provider
+				$this->process_login();
+			}
 			
-			$this->content['custom'] = "<br /><br /><div><h1>$title</h1><p>$descr</p>$content</div>";
+			// see if the account pages are accessed
+			$tmpl = array( 'account', 'favorites', 'user', 'user-wall', 
+				'user-activity', 'user-questions', 'user-answers' );
+			$logins_page = qa_request() == 'logins' && !qa_get('confirm');
+			
+			if ( in_array($this->template, $tmpl) || $logins_page ) {
+				// add a navigation item
+				$this->content['navigation']['sub']['logins'] = array(
+					'label' => qa_lang_html('plugin_open/my_logins_nav'),
+					'url' => qa_path_html('logins'),
+					'selected' => $logins_page
+				);
+				return;
+			}
+			
+		} else {
+		
+			// then check if login/register pages are accessed
+			$tmpl = array( 'register', 'login' );
+			if ( !in_array($this->template, $tmpl) ) {
+				return;
+			}
+
+			// add some custom text
+			if(!empty($this->content['custom'])) {
+				$title = qa_lang_html('plugin_open/login_title');
+				$descr = qa_lang_html('plugin_open/login_description');
+				$content = str_replace('<BR>', '', $this->content['custom']);
+				
+				$this->content['custom'] = "<br /><br /><div><h1>$title</h1><p>$descr</p>$content</div>";
+			}
+		
 		}
 	}
 

@@ -88,10 +88,12 @@ Don't edit the string on the left-hand side. Once you've completed the translati
 * Change how duplicate accounts are displayed and linked together to make the process more straight-forward and to favor for less duplicates. Users are now forced to merge the entire user account, not just a login method. This approach simplifies both the business logic and the technical implementation. No additional work is necessary to get the new process working and existing users will not be impacted (no need to migrate anything).
 * Implement the ability to specify what account to keep when merging duplicate accounts.
 * Implement the ability to arbitrarily associate external logins with current account.
-* Improved the layout of the `logins` page.
+* Improve the detection of duplicate accounts, which now works fine even if the plugin is installed after users created their accounts.
+* Improve the layout of the `logins` page.
 * Update CSS file. Important! If a custom theme is used it must be manually updated.
+* Translation files for Russian and Spanish have been removed because of the massive translation changes in this new version.
 
-Note: due to massive translation changes, the Russian and Spanish translation files have been removed.
+Due to navigation menu changes in Q2A version 1.6.3, the plugin now requires Q2A 1.6.3. Older versions of Q2A should use a previous version of the plugin. 
 
 
 **v2.1.1**

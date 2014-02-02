@@ -115,7 +115,7 @@ class qa_open_logins_page {
 		if(!$disp_conf) { 
 			// just visiting the regular page
 			$qa_content['title'] = qa_lang_html('plugin_open/my_logins_title');
-			$qa_content['navigation']['sub'] = qa_account_sub_navigation();
+			$qa_content['navigation']['sub'] = qa_user_sub_navigation($useraccount['handle'], '', true);
 			$qa_content['script_onloads'][]='$(function(){ window.setTimeout(function() { qa_conceal(".form-notification-ok"); }, 1500); });';
 			
 			$this->display_summary($qa_content, $useraccount);
