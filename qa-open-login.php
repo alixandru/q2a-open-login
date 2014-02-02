@@ -100,7 +100,7 @@ class qa_open_login {
 						'handle' => @$user->displayName,
 						'confirmed' => !empty($user->emailVerified),
 						'name' => @$user->displayName,
-						'location' => @$user->city,
+						'location' => @$user->region,
 						'website' => @$user->webSiteURL,
 						'about' => @$user->description,
 						'avatar' => strlen(@$user->photoURL) ? qa_retrieve_url($user->photoURL) : null,
