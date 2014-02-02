@@ -50,7 +50,7 @@ return array(
 	'select_merge_first' => 'Only the selected accounts will be merged into a single one.',
 	'merge_note' => 'You have the possibility to choose a main account which will be kept after the merge and which will acquire the login details from the other accounts. It is important to note that the other accounts will be associated with the main profile you select and their own profiles will be deleted. The points and reputation of these accounts will not be migrated and the previous activity will be marked as anonymous. Only the activity and the points of the main account you choose will remain intact. This action is not reversible.',
 	'cancel_merge' => 'I don\'t care about duplicates. Leave everything as is.',
-	'cancel_merge_note' => 'If you choose this option it is possible that your reputation points be split across several user accounts. At moment, there is no way to migrate points from one account to another and this is why it is recommended to merge all your accounts into a single one.',
+	'cancel_merge_note' => 'If you choose this option it is possible that your reputation points be split across several user accounts. At this moment, there is no way to migrate points from one account to another and this is why it is recommended to merge all your accounts into a single one.',
 	'select_base' => 'select an account',
 	'select_base_note' => 'Choose the account which you will be using after the merge:',
 	'current_account' => 'current account',

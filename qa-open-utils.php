@@ -27,7 +27,7 @@
 
 
 function qa_db_user_login_find_other__open($userid, $email, $additional = 0) {
-	// return all logins with the same email OR which are not associated with this user
+	// return all logins with the same email OR which are associated with the specified user ids
 	// super admins will not be included
 	
 	/* create a hierarchical structure like this: 
@@ -39,10 +39,11 @@ function qa_db_user_login_find_other__open($userid, $email, $additional = 0) {
 	if(!empty($email))
 		$logins = qa_db_read_all_assoc(qa_db_query_sub(
 			'SELECT us.*, up.points, ul.identifier, ul.source, ul.oemail as uloemail FROM ^users us 
-				LEFT JOIN ^userlogins ul ON us.userid = ul.userid 
 				LEFT JOIN ^userpoints up ON us.userid = up.userid 
-				WHERE (us.oemail=$ OR us.email=$) AND us.level<=$',
-			$email, $email, 100
+				LEFT JOIN ^userlogins ulf ON us.userid = ulf.userid 
+				LEFT JOIN ^userlogins ul ON us.userid = ul.userid 
+				WHERE (us.oemail=$ OR us.email=$ OR ulf.oemail=$) AND us.level<=$',
+			$email, $email, $email, 100
 		));
 	else if(!empty($userid))
 		$logins = qa_db_read_all_assoc(qa_db_query_sub(
@@ -69,7 +70,7 @@ function qa_db_user_login_find_other__open($userid, $email, $additional = 0) {
 				'handle' => $l['handle'],
 				'points' => $l['points'],
 				'email' => $l['email'],
-				'oemail' => $l['oemail'],
+				'oemail' => $l['uloemail'],
 			);
 		}
 		

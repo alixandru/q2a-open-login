@@ -169,6 +169,7 @@ class qa_open_logins_page {
 		}
 		
 		if($tolink) {
+			// user is logged in with $userid but wants to merge $findid
 			$findemail = null;
 			$findid = $tolink['userid'];
 			
