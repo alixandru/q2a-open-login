@@ -90,6 +90,7 @@ Don't edit the string on the left-hand side. Once you've completed the translati
 * Implement the ability to arbitrarily associate external logins with current account.
 * Improve the detection of duplicate accounts, which now works fine even if the plugin is installed after users created their accounts.
 * Improve the layout of the `logins` page.
+* New widget which shows all the login buttons in the sidebar, as an alternative to header buttons.
 * Update CSS file. Important! If a custom theme is used it must be manually updated.
 * Translation files for Russian and Spanish have been removed because of the massive translation changes in this new version.
 

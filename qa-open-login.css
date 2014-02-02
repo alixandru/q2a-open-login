@@ -8,6 +8,13 @@
 		margin-top: 5px;
 		width: 30%;
 	}
+	
+	.open-login-button.context-sidebar {
+		font-weight: bold;
+		margin: 0 10px 5px 10px;
+		display: block;
+		max-width: 90%;
+	}
 
 	.open-login-button.context-menu.zocial {
 		margin-top: -4px;

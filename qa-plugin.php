@@ -55,6 +55,7 @@ if (!QA_FINAL_EXTERNAL_USERS) { // login modules don't work with external user i
 	qa_register_plugin_overrides('qa-open-overrides.php');
 	qa_register_plugin_layer('qa-open-layer.php', 'OAuth/OpenID Layer');
 	qa_register_plugin_module('page', 'qa-open-page-logins.php', 'qa_open_logins_page', 'Open Login Configuration');
+	qa_register_plugin_module('widget', 'qa-open-widget.php', 'qa_open_logins_widget', 'Open Login Providers');
 	
 	// sice we're not allowed to access the database at this step, take the information from a local file
 	// note: the file providers.php will be automatically generated when the configuration of the plugin
