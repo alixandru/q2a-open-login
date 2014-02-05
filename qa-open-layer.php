@@ -36,8 +36,8 @@ class qa_html_theme_layer extends qa_html_theme_base
 		}
 
 		// check if logged in
-		$userid = qa_get_logged_in_userid();
-		if (isset($userid)) {
+		$handle = qa_get_logged_in_handle();
+		if (isset($handle)) {
 		
 			if(qa_request() == '' && count($_GET) > 0) {
 				// Check if we need to associate another provider
@@ -45,11 +45,14 @@ class qa_html_theme_layer extends qa_html_theme_base
 			}
 			
 			// see if the account pages are accessed
-			$tmpl = array( 'account', 'favorites', 'user', 'user-wall', 
-				'user-activity', 'user-questions', 'user-answers' );
+			$tmpl = array( 'account', 'favorites' );
+			$user_pages = array('user', 'user-wall', 'user-activity', 
+				'user-questions', 'user-answers' );
 			$logins_page = qa_request() == 'logins' && !qa_get('confirm');
+			$urlhandle = qa_request_part(1);
 			
-			if ( in_array($this->template, $tmpl) || $logins_page ) {
+			if ( in_array($this->template, $tmpl) || $logins_page || 
+				(in_array($this->template, $user_pages) && $handle == $urlhandle) ) {
 				// add a navigation item
 				$this->content['navigation']['sub']['logins'] = array(
 					'label' => qa_lang_html('plugin_open/my_logins_nav'),

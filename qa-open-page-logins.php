@@ -496,8 +496,8 @@ class qa_open_logins_page {
 			$qa_content['form_mylogins']['fields'] = $data;
 			$qa_content['customscriptu'] = '<script type="text/javascript">
 				function OP_unlink(id) {
-					$(".qa-main form>input[name=dosplit]").attr("value", id);
-					$(".qa-main form").submit();
+					$(".qa-main form.open-login-accounts>input[name=dosplit]").attr("value", id);
+					$(".qa-main form.open-login-accounts").submit();
 				}
 			</script>';
 		}
