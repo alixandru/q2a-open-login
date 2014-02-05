@@ -88,6 +88,7 @@ Don't edit the string on the left-hand side. Once you've completed the translati
 * Change how duplicate accounts are displayed and linked together to make the process more straight-forward and to favor for less duplicates. Users are now forced to merge the entire user account, not just a login method. This approach simplifies both the business logic and the technical implementation. No additional work is necessary to get the new process working and existing users will not be impacted (no need to migrate anything).
 * Implement the ability to specify what account to keep when merging duplicate accounts.
 * Implement the ability to arbitrarily associate external logins with current account.
+* Implement the ability to hide the regular login/register forms and allow users to login only through external providers.
 * Improve the detection of duplicate accounts, which now works fine even if the plugin is installed after users created their accounts.
 * Improve the layout of the `logins` page.
 * New widget which shows all the login buttons in the sidebar, as an alternative to header buttons.

@@ -801,6 +801,9 @@ class qa_open_logins_page {
 			
 			$zocial = qa_post_text('open_login_zocial');
 			qa_opt('open_login_zocial', empty($zocial) ? 0 : 1);
+			
+			$nologin = qa_post_text('open_login_hideform');
+			qa_opt('open_login_hideform', empty($nologin) ? 0 : 1);
 			$saved=true;
 		}
 		
@@ -820,6 +823,12 @@ class qa_open_logins_page {
 					'label' => 'Use <a href="http://zocial.smcllns.com/">Zocial buttons</a> (works out-of-the-box with inlined CSS; if "Don\'t inline CSS" checkbox is selected, the custom theme must be manually modified to import <i>zocial.css</i> file)',
 					'value' => qa_opt('open_login_zocial') ? true : false,
 					'tags' => 'NAME="open_login_zocial"',
+				),
+				array(
+					'type' => 'checkbox',
+					'label' => 'Hide regular login/register forms and keep only external login buttons (might require theme changes)',
+					'value' => qa_opt('open_login_hideform') ? true : false,
+					'tags' => 'NAME="open_login_hideform"',
 				),
 				
 				array(

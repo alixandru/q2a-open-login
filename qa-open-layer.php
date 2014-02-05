@@ -30,6 +30,10 @@ class qa_html_theme_layer extends qa_html_theme_base
 {
 	function doctype() {
 		parent::doctype();
+		
+		if(QA_FINAL_EXTERNAL_USERS) {
+			return;
+		}
 
 		// check if logged in
 		$userid = qa_get_logged_in_userid();
@@ -56,20 +60,36 @@ class qa_html_theme_layer extends qa_html_theme_base
 			}
 			
 		} else {
+			
+			$title = qa_lang_html('plugin_open/login_title');
+			$descr = qa_lang_html('plugin_open/login_description');
+			
+			// hide login/register links from navigation on any page
+			if(qa_opt('open_login_hideform') == '1') {
+				unset($this->content['navigation']['user']['login']);
+				unset($this->content['navigation']['user']['register']);
+			}
 		
 			// then check if login/register pages are accessed
 			$tmpl = array( 'register', 'login' );
 			if ( !in_array($this->template, $tmpl) ) {
 				return;
 			}
-
+			
+			// hide regular login/register form on those pages only
+			if(qa_opt('open_login_hideform') == '1') {
+				$this->content['title'] = $title;
+				$this->content['form'] = null;
+			}
+			
 			// add some custom text
 			if(!empty($this->content['custom'])) {
-				$title = qa_lang_html('plugin_open/login_title');
-				$descr = qa_lang_html('plugin_open/login_description');
-				$content = str_replace('<BR>', '', $this->content['custom']);
+				$content = str_ireplace('<BR>', '', $this->content['custom']);
+				$this->content['custom'] = "<div><p>$descr</p>$content</div>";
 				
-				$this->content['custom'] = "<br /><br /><div><h1>$title</h1><p>$descr</p>$content</div>";
+				if($this->content['form'] != null) {
+					$this->content['custom'] = "<br /><br /><h1>$title</h1>{$this->content['custom']}";
+				}
 			}
 		
 		}
