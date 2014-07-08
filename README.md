@@ -29,7 +29,7 @@ The plugin also offers the ability to link multiple OpenID/OAuth-powered logins 
 
 ## Configuration ##
 
-* Go to **Admin -> Plugins** on your Q2A installation and enable the providers which you would like to use. For all OAuth-based providers (all, except Google and Yahoo, which use OpenID) you need to provide some keys after you register your application with them. See [HybridAuth documentation](http://hybridauth.sourceforge.net/userguide.html) for information about what is needed for each provider.
+* Go to **Admin -> Plugins** on your Q2A installation and enable the providers which you would like to use. For all OAuth-based providers (all, except Yahoo, which uses OpenID) you need to provide some keys after you register your application with them. Check the documentation URL below each login provider in the administration page; it will take you to the HybridAuth documentation page which contains information on how to register your application and what Callback URL to use.
 * Optionally, add the contents of the *qa-open-login.css* file to your theme's CSS file and select the option **Don't inline CSS** from the **Open Login Configuration** section on the **Admin -> Plugins** page. 
 * Optionally, enable stylish CSS icons for the login links (through the *Zocial* pack) by selecting the option **Use Zocial buttons** from the **Open Login Configuration** section on the **Admin -> Plugins** page. In case you are using a custom theme, you need to perform an extra step: manually modify the theme's CSS file to import `zocial.css` file (usually by adding `@import url('/path-to-q2a/qa-plugin/q2a-open-login/css/zocial.css');` at the top of the file). Please note that, according to the URL of your Q2A instance, you might need to adjust the paths in the CSS file. 
 
@@ -49,7 +49,7 @@ The plugin also offers the ability to link multiple OpenID/OAuth-powered logins 
 
 ### Adding new login providers ###
 
-Since this plugin is based on [HybridAuth](http://hybridauth.sourceforge.net/), you can easily add new login providers to your Q2A site. All you need to do is to add the provider PHP file to the `Hybrid/Providers` folder and configure it from the Administration page. That's it! 
+Since this plugin is based on [HybridAuth](http://hybridauth.sourceforge.net/), you can easily add new login providers to your Q2A site. All you need to do is to add the provider PHP file to the `Hybrid/Providers` folder and configure it from the Administration page. That's it! New providers can be downloaded from HybridAuth website.
 
 
 
@@ -93,7 +93,7 @@ Don't edit the string on the left-hand side. Once you've completed the translati
 * Improve the layout of the `logins` page.
 * New widget which shows all the login buttons in the sidebar, as an alternative to header buttons.
 * Update CSS file. Important! If a custom theme is used it must be manually updated.
-* Translation files for Russian and Spanish have been removed because of the massive translation changes in this new version.
+* Translation files (Russian, Spanish and French) have been removed because of the massive translation changes in this new version.
 
 Due to navigation menu changes in Q2A version 1.6.3, the plugin now requires Q2A 1.6.3. Older versions of Q2A should use a previous version of the plugin. 
 
