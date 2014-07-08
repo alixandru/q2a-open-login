@@ -502,7 +502,7 @@ class qa_open_logins_page {
 			);
 			
 			$docUrl = "http://hybridauth.sourceforge.net/userguide/IDProvider_info_{$provider}.html";
-			if($provider == 'Google' || $provider == 'Yahoo') {
+			if($provider == 'Yahoo') {
 				$form['fields'][] = array(
 					'type' => 'static',
 					'label' => 'By default, <strong>' . $provider . '</strong> uses OpenID and does not need any keys, so these fields should ' .

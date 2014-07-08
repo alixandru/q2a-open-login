@@ -231,7 +231,7 @@ class qa_open_login {
 				$url .= '&amp;to=' . $tourl; // play nice with validators
 			}
 			$classes = "$context action-login $zocial $css";
-			$title = qa_lang_html_sub('plugin_open/login_using', $this->provider == 'GooglePlus' ? 'Google+' : $this->provider );
+			$title = qa_lang_html_sub('plugin_open/login_using', $this->provider == 'Google' ? 'Google+' : $this->provider );
 			$text = $this->provider . ' ' . qa_lang_html('main/nav_login');
 			
 			if($context != 'menu') {
