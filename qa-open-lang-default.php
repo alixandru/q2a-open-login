@@ -39,7 +39,6 @@ return array(
 	'no_logins_text' => 'Log in using an external login provider to connect your current profile with other accounts.',
 	'login_title' => 'Login through an external provider',
 	'login_description' => 'Choose an external provider from the list below to login without creating an account on this site.',
-	'remember_me' => 'Keep me signed in when I log in using any of the linked accounts.',
 	'login_using' => 'Login using ^',
 	'password' => 'password',
 	'continue' => 'Continue',

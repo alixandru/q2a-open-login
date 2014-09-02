@@ -39,7 +39,6 @@ return array(
 	'no_logins_text' => 'Autentifica-te folosind un serviciu extern pentru a asocia profilul tau curent cu alte conturi.',
 	'login_title' => 'Autentificare folosind un serviciu extern',
 	'login_description' => 'Alege un furnizor extern din lista de mai jos pentru a te autentifica fara sa fie nevoie sa iti mai creezi un cont pe punctsivirgula.ro',
-	'remember_me' => 'Pastreaza-ma autentificat cand ma loghez folosind oricare din conturile de mai jos',
 	'login_using' => 'Login prin ^',
 	'password' => 'parola',
 	'continue' => 'Mai departe',

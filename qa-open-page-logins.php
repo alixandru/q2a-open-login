@@ -154,8 +154,7 @@ class qa_open_logins_page {
 	
 	function check_settings() {
 		if (qa_clicked('dosaveprofile')) {
-			qa_opt('open_login_remember', qa_post_text('remember') ? '1' : '0');
-			qa_redirect('logins', array('state' => 'profile-saved'));
+			/* nothing here for now */
 		}
 	}
 	
@@ -436,25 +435,10 @@ class qa_open_logins_page {
 					'value' => qa_html($useraccount['email']),
 					'type' => 'static',
 				),
-				
-				'remember' => array(
-					'type' => 'checkbox',
-					'label' => qa_lang_html('users/remember_label'),
-					'note' => qa_lang_html('plugin_open/remember_me'),
-					'tags' => 'NAME="remember"',
-					'value' => qa_opt('open_login_remember') ? true : false,
-				),
-			),
-			
-			'buttons' => array(
-				'save' => array(
-					'tags' => 'onClick="qa_show_waiting_after(this, false);"',
-					'label' => qa_lang_html('users/save_profile'),
-				),
 			),
 			
 			'hidden' => array(
-				'dosaveprofile' => '1'
+				'dosaveprofile' => '0'
 			),
 
 		);
@@ -804,6 +788,9 @@ class qa_open_logins_page {
 			
 			$nologin = qa_post_text('open_login_hideform');
 			qa_opt('open_login_hideform', empty($nologin) ? 0 : 1);
+			
+			$remember = qa_post_text('open_login_remember');
+			qa_opt('open_login_remember', empty($remember) ? 0 : 1);
 			$saved=true;
 		}
 		
@@ -830,7 +817,12 @@ class qa_open_logins_page {
 					'value' => qa_opt('open_login_hideform') ? true : false,
 					'tags' => 'NAME="open_login_hideform"',
 				),
-				
+				array(
+					'type' => 'checkbox',
+					'label' => 'Keep users logged in when they connect through external login providers (this will log users in automatically when they return to the site, even if they close their browsers)',
+					'value' => qa_opt('open_login_remember') ? true : false,
+					'tags' => 'NAME="open_login_remember"',
+				),
 				array(
 					'type' => 'static',
 					'label' => '<br /><strong>Available login providers</strong>',
