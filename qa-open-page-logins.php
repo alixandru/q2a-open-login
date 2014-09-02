@@ -241,25 +241,10 @@ class qa_open_logins_page {
 						'value' => qa_html($useraccount['email']),
 						'type' => 'static',
 					),
-					
-					'remember' => array(
-						'type' => 'checkbox',
-						'label' => qa_lang_html('users/remember_label'),
-						'note' => qa_lang_html('plugin_open/remember_me'),
-						'tags' => 'NAME="remember"',
-						'value' => qa_opt('open_login_remember') ? true : false,
-					),
-				),
-				
-				'buttons' => array(
-					'save' => array(
-						'tags' => 'onClick="qa_show_waiting_after(this, false);"',
-						'label' => qa_lang_html('users/save_profile'),
-					),
 				),
 				
 				'hidden' => array(
-					'dosaveprofile' => '1'
+					'dosaveprofile' => '0'
 				),
 
 			);
@@ -429,6 +414,9 @@ class qa_open_logins_page {
 			
 			$zocial = qa_post_text('open_login_zocial');
 			qa_opt('open_login_zocial', empty($zocial) ? 0 : 1);
+			
+			$remember = qa_post_text('open_login_remember');
+			qa_opt('open_login_remember', empty($remember) ? 0 : 1);
 			$saved=true;
 		}
 		
@@ -450,6 +438,13 @@ class qa_open_logins_page {
 					'tags' => 'NAME="open_login_zocial"',
 				),
 				
+				array(
+					'type' => 'checkbox',
+					'label' => 'Keep users logged in when they connect through external login providers (this will log users in automatically when they return to the site, even if they close their browsers)',
+					'value' => qa_opt('open_login_remember') ? true : false,
+					'tags' => 'NAME="open_login_remember"',
+				),
+
 				array(
 					'type' => 'static',
 					'label' => '<br /><strong>Available login providers</strong>',
