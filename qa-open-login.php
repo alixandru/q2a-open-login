@@ -198,8 +198,7 @@ class qa_open_login {
 		$css = $key = strtolower($provider);
 		if ($key == 'live') {
 			$css = 'windows'; // translate provider name to zocial css class
-		} else if ($key == 'google') {
-			$css = 'googleplus';
+		} else if ($key == 'googleplus') {
 			$provider = 'Google+';
 		}
 		$showInHeader = qa_opt("{$key}_app_shortcut") ? true : false;

@@ -92,6 +92,7 @@ Don't edit the string on the left-hand side. Once you've completed the translati
 * Improve the detection of duplicate accounts, which now works fine even if the plugin is installed after users created their accounts.
 * Improve the layout of the `logins` page.
 * New widget which shows all the login buttons in the sidebar, as an alternative to header buttons.
+* Changes to Google provider: the "Login with Google" (OAuth2) provider is the default one for Google. If you need "Login with Google Plus", you can still use it (it's been renamed to `GooglePlus`). The reason for this change is that "Login with Google Plus" requires users to have a Google+ account, and from Q2A point of view this is an artificial requirement not needed for the login process to work properly.
 * Update CSS file. Important! If a custom theme is used it must be manually updated.
 * Translation files (Russian, Spanish and French) have been removed because of the massive translation changes in this new version.
 
