@@ -894,6 +894,12 @@ class qa_open_logins_page {
 			
 			$form['fields'][] = array(
 				'type' => 'static',
+				'label' => 'Callback URL/Redirect URL (to use when registering your application with ' . $provider . '): <br /><strong>' . 
+							qa_opt('site_url') . '?hauth.done=' . $provider . '</strong>',
+			);
+			
+			$form['fields'][] = array(
+				'type' => 'static',
 				'label' => '&nbsp;',
 			);
 		}
