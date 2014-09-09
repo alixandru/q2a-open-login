@@ -27,7 +27,7 @@
 
 
 function qa_db_user_login_find_other__open($userid, $email, $additional = 0) {
-	// return all logins with the same email OR which are associated with the specified user ids
+	// return all logins with the same (verified) email OR which are associated with the specified user id
 	// super admins will not be included
 	
 	/* create a hierarchical structure like this: 
@@ -42,8 +42,8 @@ function qa_db_user_login_find_other__open($userid, $email, $additional = 0) {
 				LEFT JOIN ^userpoints up ON us.userid = up.userid 
 				LEFT JOIN ^userlogins ulf ON us.userid = ulf.userid 
 				LEFT JOIN ^userlogins ul ON us.userid = ul.userid 
-				WHERE (us.oemail=$ OR us.email=$ OR ulf.oemail=$) AND us.level<=$',
-			$email, $email, $email, 100
+				WHERE (us.oemail=$ OR (us.email=$ AND us.flags & $) OR ulf.oemail=$) AND us.level<=$',
+			$email, $email, QA_USER_FLAGS_EMAIL_CONFIRMED, $email, 100
 		));
 	else if(!empty($userid))
 		$logins = qa_db_read_all_assoc(qa_db_query_sub(
@@ -131,6 +131,7 @@ function qa_db_user_login_delete__open($source, $identifier, $userid) {
 
 function qa_db_user_find_by_email_or_oemail__open($email) {
 	// Return the ids of all users in the database which match $email (should be one or none)
+	// Note: we're not verifying the confirmed flag here - all emails should be considered
 	if(empty($email)) {
 		return array();
 	}
