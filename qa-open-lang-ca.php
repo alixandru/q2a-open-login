@@ -37,7 +37,7 @@ return array(
 	'split_accounts_note' => 'Aquests comptes són externs, els pots fer servir per entrar a aquesta web. Si us plau, tingues present que es fan servir estrictament per autenticar-te i no per enviar missatges a xarxes socials en nom teu.',
 	'no_logins_title' => 'No hi ha altres comptes externs per al teu perfil.',
 	'no_logins_text' => 'Entra fent servir un proveïdor extern per connectar el teu perfil actual a aquests altres comptes.',
-	'login_title' => 'Entra usant un proveïdor extern.',
+	'login_title' => "No cal que et registris. Pots entrar fent servir un proveïdor extern.\n",
 	'login_description' => "Tria un proveïdor extern d'aquesta llista per entrar sense haver de registrar-te en aquesta web.",
 	'login_using' => 'Entra usant ^',
 	'password' => 'contrasenya',
