@@ -232,7 +232,7 @@ class qa_open_login {
 			if(strlen($tourl) > 0) {
 				$url .= '&amp;to=' . $tourl; // play nice with validators
 			}
-			$classes = "$context action-login $zocial $css";
+			$classes = "$context action-login $zocial  $css";
 			$title = qa_lang_html_sub('plugin_open/login_using', $provider);
 			$text = $provider . ' ' . qa_lang_html('main/nav_login');
 			
