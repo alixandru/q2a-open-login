@@ -258,7 +258,7 @@ class qa_open_login {
 		}
 		
 		$html = <<<HTML
-  <a class="open-login-button context-$classes" style="font-size: 12px;" title="$title" href="$url" rel="nofollow">$text</a>
+  <a class="open-login-button context-$classes" title="$title" href="$url" rel="nofollow">$text</a>
 HTML;
 		if($print) {
 			echo $html;
