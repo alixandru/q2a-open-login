@@ -613,8 +613,8 @@ class qa_open_logins_page {
 						OP_baseSelected(sel);
 					} else {
 						$(".qa-main form.open-login-others span.qa-form-wide-note").html("' . qa_lang_html('plugin_open/action_info_2') . '"); 
-						$(".qa-main form.open-login-others input[type=submit]").show(); 
-						$(".qa-main form.open-login-others input[type=submit]").attr("disabled", false);
+						$(".qa-main form.open-login-others button[type=submit]").show(); 
+						$(".qa-main form.open-login-others button[type=submit]").attr("disabled", false);
 					}
 				}
 				
@@ -625,14 +625,14 @@ class qa_open_logins_page {
 						} else {
 							$(".qa-main form.open-login-others span.qa-form-wide-note").html("' . qa_lang_html('plugin_open/action_info_1') . '")
 						}
-						$(".qa-main form.open-login-others input[type=submit]").hide()
-						$(".qa-main form.open-login-others input[type=submit]").attr("disabled", "disabled")
+						$(".qa-main form.open-login-others button[type=submit]").hide()
+						$(".qa-main form.open-login-others button[type=submit]").attr("disabled", "disabled")
 					} else {
 						if(OP_accValid()) {
 							nam = $("option:selected", sel).attr("title")
 							$(".qa-main form.open-login-others span.qa-form-wide-note").html("<strong>" + nam + "</strong> '  . qa_lang_html('plugin_open/action_info_4') . '")
-							$(".qa-main form.open-login-others input[type=submit]").show()
-							$(".qa-main form.open-login-others input[type=submit]").attr("disabled", false)
+							$(".qa-main form.open-login-others button[type=submit]").show()
+							$(".qa-main form.open-login-others button[type=submit]").attr("disabled", false)
 						}
 					}
 				}
@@ -662,8 +662,8 @@ class qa_open_logins_page {
 						someSel = someSel || $(o).attr("checked") == "checked"
 					});
 					
-					$(".qa-main form.open-login-others input[type=submit]").hide();
-					$(".qa-main form.open-login-others input[type=submit]").attr("disabled", "disabled");
+					$(".qa-main form.open-login-others button[type=submit]").hide();
+					$(".qa-main form.open-login-others button[type=submit]").attr("disabled", "disabled");
 					if(!someSel) { // nothing selected
 						$(".qa-main form.open-login-others span.qa-form-wide-note").html("' . qa_lang_html('plugin_open/action_info_5') . '");
 						return false;
