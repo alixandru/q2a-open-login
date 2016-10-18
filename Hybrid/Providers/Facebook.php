@@ -164,6 +164,7 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 			$this->user->profile->birthMonth = (int) $birthday_month;
 			$this->user->profile->birthYear = (int) $birthday_year;
 		}
+		$this->user_display_name_change();
 
 		return $this->user->profile;
  	}
@@ -285,4 +286,41 @@ class Hybrid_Providers_Facebook extends Hybrid_Provider_Model
 
 		return $activities;
  	}
+	
+	function user_display_name_change()
+	{
+		$initialname = '';
+		$first = $this->user->profile->firstName;
+		$last = $this->user->profile->lastName;
+		if(!empty($first) && !empty($last)) {
+			$initialname = mb_substr($first, 0, 1, 'UTF-8') . '.' . mb_substr($last, 0, 1, 'UTF-8');
+		} else {
+			$names = explode(" ", $this->user->profile->displayName);
+			if (isset($names[0]) && isset($names[1])) {
+				$initialname = mb_substr($names[0], 0, 1, 'UTF-8') . '.' . mb_substr($names[1], 0, 1, 'UTF-8');
+			} else {
+				$initialname = mb_substr($this->user->profile->displayName, 0, 2, 'UTF-8');
+			}
+		}
+		if (!empty($initialname)) {
+			$initialname = $this->duplicates_handle_check($initialname);
+			$this->user->profile->displayName = $initialname;
+		}
+	}
+	
+	function duplicates_handle_check($handle)
+	{
+		$new_handle = '';
+		
+		$sql = "SELECT count(handle) FROM ^users";
+		$sql .= " WHERE handle Like $";
+		$result = qa_db_read_one_value(qa_db_query_sub($sql, '%'.$handle.'%'), true);
+		if ($result > 0) {
+			$result++;
+			$new_handle = $handle.$result;
+		} else {
+			$new_handle = $handle;
+		}
+		return $new_handle;
+	}
 }
