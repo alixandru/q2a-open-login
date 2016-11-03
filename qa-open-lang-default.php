@@ -63,4 +63,5 @@ return array(
 	'link_all' => 'Merge accounts into a single one.',
 	'cancel_link' => 'Cancel the merge and let everything unchanged.',
 	'link_exists' => 'The external account your are trying to connect with (through ^) is already linked with another user account on this site. If these accounts belong to you, you can merge them together in order to avoid duplicates.',
+	'show_login_button' => 'A social login button isn\'t shown to a login page.',
 );
