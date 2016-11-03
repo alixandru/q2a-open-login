@@ -185,12 +185,16 @@ class qa_open_login {
 
 
 	function login_html($tourl, $context) {
-		self::printCode($this->provider, $tourl, $context, 'login');
+		if (!qa_opt('open_login_hide_buttons')) {
+			self::printCode($this->provider, $tourl, $context, 'login');
+		}
 	}
 
 
 	function logout_html($tourl) {
-		self::printCode($this->provider, $tourl, 'menu', 'logout');
+		if (!qa_opt('open_login_hide_buttons')) {
+			self::printCode($this->provider, $tourl, 'menu', 'logout');
+		}
 	}
 
 
