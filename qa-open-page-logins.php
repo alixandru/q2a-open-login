@@ -792,8 +792,8 @@ class qa_open_logins_page {
 			$remember = qa_post_text('open_login_remember');
 			qa_opt('open_login_remember', empty($remember) ? 0 : 1);
 			
-			$showbuttons = qa_post_text('open_login_show_buttons');
-			qa_opt('open_login_show_buttons', empty($showbuttons) ? 0 : 1);
+			$showbuttons = qa_post_text('open_login_hide_buttons');
+			qa_opt('open_login_hide_buttons', empty($showbuttons) ? 0 : 1);
 			$saved=true;
 		}
 		
@@ -829,8 +829,8 @@ class qa_open_logins_page {
 				array(
 					'type' => 'checkbox',
 					'label' => qa_lang_html('plugin_open/show_login_button'),
-					'value' => qa_opt('open_login_show_buttons') ? true : false,
-					'tags' => 'NAME="open_login_show_buttons"',
+					'value' => qa_opt('open_login_hide_buttons') ? true : false,
+					'tags' => 'NAME="open_login_hide_buttons"',
 				),
 				array(
 					'type' => 'static',
