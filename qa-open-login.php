@@ -105,7 +105,13 @@ class qa_open_login {
 						'about' => @$user->description,
 						'avatar' => strlen(@$user->photoURL) ? qa_retrieve_url($user->photoURL) : null,
 					));
-
+					
+				// ユーザー作成からログインまでが３０秒以内は新規登録とみなす
+				$user_created=qa_get_logged_in_user_field('created');
+				$user_login=qa_get_logged_in_user_field('loggedin');
+				if (($user_login - $user_created) <= 30) {
+					$topath = 'account?state=new';
+				}
 				if($duplicates > 0) {
 					qa_redirect('logins', array('confirm' => '1', 'to' => $topath));
 				} else {
