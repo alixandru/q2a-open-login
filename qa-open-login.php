@@ -110,7 +110,7 @@ class qa_open_login {
 				$user_created=qa_get_logged_in_user_field('created');
 				$user_login=qa_get_logged_in_user_field('loggedin');
 				if (($user_login - $user_created) <= 30) {
-					$topath = 'account?state=new';
+					$topath = 'ask?state=new&slogin='.strtolower($this->provider);
 				}
 				if($duplicates > 0) {
 					qa_redirect('logins', array('confirm' => '1', 'to' => $topath));
