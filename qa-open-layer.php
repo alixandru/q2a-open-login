@@ -142,4 +142,11 @@ class qa_html_theme_layer extends qa_html_theme_base
 		Hybrid_Endpoint::process();
 	}
 	
+	function nav_main_sub()
+	{
+		//ナビゲーションを表示しない
+		if ($this->template !== 'logins') {
+			qa_html_theme_base::nav_main_sub();
+		}
+	}
 }
