@@ -110,10 +110,10 @@ class qa_open_login {
 				$user_created=qa_get_logged_in_user_field('created');
 				$user_login=qa_get_logged_in_user_field('loggedin');
 				if (($user_login - $user_created) <= 30) {
-					$topath = 'ask?state=new&slogin='.strtolower($this->provider);
+					$topath = htmlspecialchars('ask?state=new&slogin='.strtolower($this->provider));
 				}
 				if($duplicates > 0) {
-					qa_redirect('logins', array('confirm' => '1', 'to' => $topath));
+					qa_redirect_raw(qa_opt('site_url') . 'logins?confirm=1&to='.$topath);
 				} else {
 					qa_redirect_raw(qa_opt('site_url') . $topath);
 				}

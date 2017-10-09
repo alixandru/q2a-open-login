@@ -111,6 +111,7 @@ class qa_open_logins_page {
 		$disp_conf = qa_get('confirm') || !empty($tolink);
 		$qa_content = qa_content_prepare();
 		
+		qa_set_template('logins');
 		//  Build page
 		if(!$disp_conf) { 
 			// just visiting the regular page
@@ -128,9 +129,9 @@ class qa_open_logins_page {
 			$qa_content['title']= qa_lang_html('plugin_open/other_logins_conf_title');
 			
 			if(!$this->display_duplicates($qa_content, $useraccount, $otherlogins)) {
-				$tourl = qa_get('to');
+				$tourl = urldecode(qa_get('to'));
 				if(!empty($tourl)) {
-					qa_redirect($tourl);
+					qa_redirect_raw(qa_opt('site_url').$tourl);
 				} else {
 					if($tolink) {
 						// unable to link the login
@@ -183,9 +184,9 @@ class qa_open_logins_page {
 		if (qa_clicked('domerge') && !empty($otherlogins)) {
 			// if cancel was requested, just redirect
 			if($_POST['domerge'] == 0) {
-				$tourl = qa_post_text('to');
+				$tourl = urldecode(qa_post_text('to'));
 				if(!empty($tourl)) {
-					qa_redirect($tourl);
+					qa_redirect_raw(qa_opt('site_url').$tourl);
 				} else {
 					qa_redirect($tolink ? 'logins' : '');
 				}
@@ -256,9 +257,9 @@ class qa_open_logins_page {
 			$conf = qa_post_text('confirm');
 			$tourl = qa_post_text('to');
 			if($conf) {
-				$tourl = qa_post_text('to');
+				$tourl = urldecode(qa_post_text('to'));
 				if(!empty($tourl)) {
-					qa_redirect($tourl);
+					qa_redirect_raw(qa_opt('site_url').$tourl);
 				} else {
 					qa_redirect($tolink ? 'logins' : '');
 				}
@@ -507,7 +508,7 @@ class qa_open_logins_page {
 				'style' => 'wide',
 				'buttons' => array(
 					'save' => array(
-						'tags' => 'onClick="qa_show_waiting_after(this, false);" style="display: none"',
+						'tags' => 'id="open_login_submit" onClick="qa_show_waiting_after(this, false);" style="display: none"',
 						'note' => qa_lang_html('plugin_open/action_info_1'),
 						'label' => qa_lang_html('plugin_open/continue'),
 					),
@@ -613,8 +614,8 @@ class qa_open_logins_page {
 						OP_baseSelected(sel);
 					} else {
 						$(".qa-main form.open-login-others span.qa-form-wide-note").html("' . qa_lang_html('plugin_open/action_info_2') . '"); 
-						$(".qa-main form.open-login-others input[type=submit]").show(); 
-						$(".qa-main form.open-login-others input[type=submit]").attr("disabled", false);
+						$("#open_login_submit").show(); 
+						$("#open_login_submit").attr("disabled", false);
 					}
 				}
 				
@@ -625,14 +626,14 @@ class qa_open_logins_page {
 						} else {
 							$(".qa-main form.open-login-others span.qa-form-wide-note").html("' . qa_lang_html('plugin_open/action_info_1') . '")
 						}
-						$(".qa-main form.open-login-others input[type=submit]").hide()
-						$(".qa-main form.open-login-others input[type=submit]").attr("disabled", "disabled")
+						$("#open_login_submit").hide()
+						$("#open_login_submit").attr("disabled", "disabled")
 					} else {
 						if(OP_accValid()) {
 							nam = $("option:selected", sel).attr("title")
 							$(".qa-main form.open-login-others span.qa-form-wide-note").html("<strong>" + nam + "</strong> '  . qa_lang_html('plugin_open/action_info_4') . '")
-							$(".qa-main form.open-login-others input[type=submit]").show()
-							$(".qa-main form.open-login-others input[type=submit]").attr("disabled", false)
+							$("#open_login_submit").show()
+							$("#open_login_submit").attr("disabled", false)
 						}
 					}
 				}
@@ -662,8 +663,8 @@ class qa_open_logins_page {
 						someSel = someSel || $(o).attr("checked") == "checked"
 					});
 					
-					$(".qa-main form.open-login-others input[type=submit]").hide();
-					$(".qa-main form.open-login-others input[type=submit]").attr("disabled", "disabled");
+					$("#open_login_submit").hide();
+					$("#open_login_submit").attr("disabled", "disabled");
 					if(!someSel) { // nothing selected
 						$(".qa-main form.open-login-others span.qa-form-wide-note").html("' . qa_lang_html('plugin_open/action_info_5') . '");
 						return false;
