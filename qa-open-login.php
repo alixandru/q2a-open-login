@@ -101,8 +101,6 @@ class qa_open_login {
 						'confirmed' => !empty($user->emailVerified),
 						'name' => @$user->displayName,
 						'location' => @$user->region,
-						'website' => @$user->webSiteURL,
-						'about' => @$user->description,
 						'avatar' => strlen(@$user->photoURL) ? qa_retrieve_url($user->photoURL) : null,
 					));
 					
@@ -290,7 +288,7 @@ HTML;
 						'key' => qa_opt("{$key}_app_id"),
 						'secret' => qa_opt("{$key}_app_secret")
 					),
-					'scope' => $this->provider == 'Facebook' ? 'email,user_about_me,user_location,user_website' : null,
+					'scope' => $this->provider == 'Facebook' ? 'email,user_location' : null,
 					'includeEmail' => $this->provider == 'Twitter' ? true : false,
 				)
 			),
