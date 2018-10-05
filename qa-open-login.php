@@ -288,7 +288,7 @@ HTML;
 						'key' => qa_opt("{$key}_app_id"),
 						'secret' => qa_opt("{$key}_app_secret")
 					),
-					'scope' => $this->provider == 'Facebook' ? 'email,user_location' : null,
+					'scope' => $this->provider == 'Facebook' ? 'email' : null,
 					'includeEmail' => $this->provider == 'Twitter' ? true : false,
 				)
 			),

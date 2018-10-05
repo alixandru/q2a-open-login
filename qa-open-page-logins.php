@@ -725,7 +725,7 @@ class qa_open_logins_page {
 						'key' => qa_opt("{$key}_app_id"), 
 						'secret' => qa_opt("{$key}_app_secret")
 					),
-					'scope' => $provider == 'Facebook' ? 'email, user_location' : null,
+					'scope' => $provider == 'Facebook' ? 'email' : null,
 				)
 			),
 			'debug_mode' => false,
