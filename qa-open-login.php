@@ -257,7 +257,7 @@ class qa_open_login {
 			$text = $tourl;
 		}
 
-		if ($key == 'google' && in_array($action, array('login', 'view', 'link')))
+		if ($key == 'google' && in_array($action, array('login', 'view', 'link'))) {
 			$html = <<<HTML
   <a class="google-signin" href="$url">
   	  <span class="google-signin-icon"></span>
