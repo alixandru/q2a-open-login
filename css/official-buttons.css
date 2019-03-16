@@ -1,23 +1,23 @@
 .google-signin {
+	width: auto;
+	background: #4285F4;
+	border: 1px solid #4285F4;
+	padding: 0;
 	display: inline-block;
-	background: white;
-	color: #000;
-	color: rgba(0,0,0,0.54);
-	width: 100%;
 	border-radius: 1px;
 	box-shadow: 1px 1px 0px 1px rgba(0,0,0,0.05);
 	white-space: nowrap;
-	padding: 0px 8px;
 }
 .google-signin-icon {
 	background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png');
 	background-size: 18px;
 	background-repeat: no-repeat;
-	background-position: 0px;
+	background-position: 11px;
+	width: 40px;
+	height: 40px;
+	background-color: #fff;
 	display: inline-block;
 	vertical-align: middle;
-	width: 18px;
-	height: 40px;
 }
 .google-signin-text {
 	display: inline-block;
@@ -26,6 +26,7 @@
 	font-size: 14px;
 	font-weight: bold;
 	font-family: 'Roboto', sans-serif;
-	color: rgba(0,0,0,0.54);
-	margin-left: 24px;
+	color: #fff;
+	margin-left: 13px;
+	margin-right: 8px;
 }
