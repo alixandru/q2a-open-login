@@ -268,7 +268,6 @@ HTML;
 			$html = <<<HTML
   <a class="open-login-button context-$classes" title="$title" href="$url" rel="nofollow">$text</a>
 HTML;
-				break;
 		}
 
 		if($print) {
