@@ -3,7 +3,7 @@
 /**
  * HybridAuth
  * http://hybridauth.sourceforge.net | http://github.com/hybridauth/hybridauth
- * (c) 2009-2015, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
+ * (c) 2009-2017, HybridAuth authors | http://hybridauth.sourceforge.net/licenses.html
  */
 
 /**
@@ -15,7 +15,7 @@
  */
 class Hybrid_Auth {
 
-	public static $version = "2.6.0";
+	public static $version = "2.11.0";
 
 	/**
 	 * Configuration array
@@ -352,6 +352,9 @@ class Hybrid_Auth {
 	 * @param string $mode PHP|JS
 	 */
 	public static function redirect($url, $mode = "PHP") {
+		if(!$mode){
+			$mode = 'PHP';
+		}
 		Hybrid_Logger::info("Enter Hybrid_Auth::redirect( $url, $mode )");
 
 		// Ensure session is saved before sending response, see https://github.com/symfony/symfony/pull/12341
@@ -399,7 +402,12 @@ class Hybrid_Auth {
 		$url = $protocol . $_SERVER['HTTP_HOST'];
 
 		if ($request_uri) {
-			$url .= $_SERVER['REQUEST_URI'];
+			// If $_SERVER['REQUEST_URI'] is already a FQDN, use it
+			if (stripos($_SERVER['REQUEST_URI'], $url) === 0) {
+				$url = $_SERVER['REQUEST_URI'];
+			} else {
+				$url .= $_SERVER['REQUEST_URI'];
+			}
 		} else {
 			$url .= $_SERVER['PHP_SELF'];
 		}
