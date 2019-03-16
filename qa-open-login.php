@@ -257,9 +257,22 @@ class qa_open_login {
 			$text = $tourl;
 		}
 		
-		$html = <<<HTML
+		switch($key) {
+			case "google":
+				$html = <<<HTML
+  <a class="google-signin" href="$url">
+  	  <span class="google-signin-icon"></span>
+      <span class="google-signin-text">Connexion avec Google</span>
+  </a>
+HTML;
+				break;
+			default:
+				$html = <<<HTML
   <a class="open-login-button context-$classes" title="$title" href="$url" rel="nofollow">$text</a>
 HTML;
+				break;
+		}
+
 		if($print) {
 			echo $html;
 		} else {
