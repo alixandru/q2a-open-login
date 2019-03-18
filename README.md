@@ -6,6 +6,7 @@ This is a plugin for **Question2Answer** that allows users to log in via Faceboo
 
 
 ## Description ##
+
 This is an extension of the Facebook Login plugin, to which it adds a broad range of additional login providers. It is based on [HybridAuth](http://hybridauth.sourceforge.net/) library which acts as a middleware between the plugin and a wide range of OAuth and OpenID service providers. For this reason, it is possible to add any identity provider supported by HybridAuth to your Q2A installation with virtually no effort.
 
 The plugin also offers the ability to link multiple OpenID/OAuth-powered logins to a Q2A user account, allowing users to log in to the same account via multiple providers. For example, an user might link his or her Facebook and Google accounts to the Q2A user account and then log in to the Q2A site through any of the 3 methods (Q2A login page, Facebook or Google).
@@ -31,7 +32,13 @@ The plugin also offers the ability to link multiple OpenID/OAuth-powered logins 
 
 * Go to **Admin -> Plugins** on your Q2A installation and enable the providers which you would like to use. For all OAuth-based providers (all, except Yahoo, which uses OpenID) you need to provide some keys after you register your application with them. Check the documentation URL below each login provider in the administration page; it will take you to the HybridAuth documentation page which contains information on how to register your application and what Callback URL to use.
 * Optionally, add the contents of the *qa-open-login.css* file to your theme's CSS file and select the option **Don't inline CSS** from the **Open Login Configuration** section on the **Admin -> Plugins** page. 
-* Optionally, enable stylish CSS icons for the login links (through the *Zocial* pack) by selecting the option **Use Zocial buttons** from the **Open Login Configuration** section on the **Admin -> Plugins** page. In case you are using a custom theme, you need to perform an extra step: manually modify the theme's CSS file to import `zocial.css` file (usually by adding `@import url('/path-to-q2a/qa-plugin/q2a-open-login/css/zocial.css');` at the top of the file). Please note that, according to the URL of your Q2A instance, you might need to adjust the paths in the CSS file. 
+* Optionally, enable stylish CSS icons for the login links (through the *Zocial* pack) by selecting the option **Use Zocial buttons** from the **Open Login Configuration** section on the **Admin -> Plugins** page. In case you are using a custom theme, you need to perform an extra step: manually modify the theme's CSS file to import `zocial.css` file (usually by adding `@import url('/path-to-q2a/qa-plugin/q2a-open-login/css/zocial.css');` at the top of the file). Please note that, according to the URL of your Q2A instance, you might need to adjust the paths in the CSS file.
+
+### How to use the Google Signin Button ?
+
+To activate the project created in the Developpers Console, you must follow [guidelines)(https://developers.google.com/identity/branding-guidelines) and you can not used the default layout of your theme or the *Zocial* pack.
+
+For a better integration with the Snowflat theme 1.4 (a default theme provided with Q2A), copy CSS code from ```css/themes/snowflat.css``` to the header via your admin interface (*Admin -> Layout* and activate *Custom HTML in ```<head>``` section of every page*)
 
 
 ### Technical notes ###
@@ -45,13 +52,12 @@ The plugin also offers the ability to link multiple OpenID/OAuth-powered logins 
   [cURL]: http://www.php.net/manual/en/book.curl.php
   [JSON]: http://www.php.net/manual/en/book.json.php
   [download]: https://github.com/alixandru/q2a-open-login/archive/master.zip
+  [Hybrid]: https://hybridauth.github.io/
 
 
 ### Adding new login providers ###
 
 Since this plugin is based on [HybridAuth](http://hybridauth.sourceforge.net/), you can easily add new login providers to your Q2A site. All you need to do is to add the provider PHP file to the `Hybrid/Providers` folder and configure it from the Administration page. That's it! New providers can be downloaded from HybridAuth website.
-
-
 
 ### Handling login errors ###
 
@@ -79,9 +85,13 @@ The translation file is **qa-open-lang-default.php**.  Copy this file to the sam
 
 Don't edit the string on the left-hand side. Once you've completed the translation, don't forget to set the site language in the admin control panel. Translations for Romanian are also included.
 
-
-
 ## Change log ##
+
+**2019-03-18**
+
+* Hybrid Library : version 2.13.0
+* Signin button layout for Google
+* CSS Tricks for Snowflat theme (1.4)
 
 **v3.0.0**
 
