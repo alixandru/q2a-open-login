@@ -92,6 +92,7 @@ Don't edit the string on the left-hand side. Once you've completed the translati
 * Hybrid Library : version 2.13.0
 * Signin button layout for Google
 * CSS Tricks for Snowflat theme (1.4)
+* French translation by [lolozere](https://github.com/lolozere)
 
 **v3.0.0**
 
