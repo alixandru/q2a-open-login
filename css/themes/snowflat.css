@@ -1,0 +1,16 @@
+.qam-account-items form  {
+    border-top: 1px dotted #fff;
+    padding-top: 5px;
+}
+.qam-account-items { padding-top: 60px; }
+.qa-nav-user { height: auto; }
+.qa-form-tall-button.qa-form-tall-button-login {margin-bottom: 3px !important;}
+.qa-nav-user-google {
+        padding: 0 !important;
+        margin-bottom: 10px;
+       position: absolute;
+       top: 10px;
+}
+.qam-account-items .google-signin {
+	width: 100%;
+}

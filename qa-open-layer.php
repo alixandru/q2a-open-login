@@ -111,6 +111,12 @@ class qa_html_theme_layer extends qa_html_theme_base
 			$this->output('<style type="text/css"><!--');
 			$this->output(@file_get_contents( QA_HTML_THEME_LAYER_URLTOROOT . 'qa-open-login.css'));
 			$this->output('//--></style>');
+
+			// Add css official buttons
+			$this->output('<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">');
+			$this->output('<style type="text/css"><!--');
+			$this->output(@file_get_contents( QA_HTML_THEME_LAYER_URLTOROOT . 'css/official-buttons.css'));
+			$this->output('//--></style>');
 			
 			if($zocial) {
 				$this->output('<style type="text/css"><!--');

@@ -234,7 +234,7 @@ class qa_open_login {
 			}
 			$classes = "$context action-login $zocial  $css";
 			$title = qa_lang_html_sub('plugin_open/login_using', $provider);
-			$text = $provider . ' ' . qa_lang_html('main/nav_login');
+			$text = ($key == 'google')?"Connexion avec Google":$provider . ' ' . qa_lang_html('main/nav_login');
 			
 			if($context != 'menu') {
 				$text = $title;
@@ -256,10 +256,20 @@ class qa_open_login {
 			$title = $provider;
 			$text = $tourl;
 		}
-		
-		$html = <<<HTML
+
+		if ($key == 'google' && in_array($action, array('login', 'view', 'link'))) {
+			$html = <<<HTML
+  <a class="google-signin" href="$url">
+  	  <span class="google-signin-icon"></span>
+      <span class="google-signin-text">$text</span>
+  </a>
+HTML;
+		} else {
+			$html = <<<HTML
   <a class="open-login-button context-$classes" title="$title" href="$url" rel="nofollow">$text</a>
 HTML;
+		}
+
 		if($print) {
 			echo $html;
 		} else {
