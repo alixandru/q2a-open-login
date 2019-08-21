@@ -12,7 +12,7 @@ use Facebook\Facebook as FacebookSDK;
 /**
  * Hybrid_Providers_Facebook provider adapter based on OAuth2 protocol
  * Hybrid_Providers_Facebook use the Facebook PHP SDK created by Facebook
- * http://hybridauth.sourceforge.net/userguide/IDProvider_info_Facebook.html
+ * https://hybridauth.github.io/hybridauth/userguide/IDProvider_info_Facebook.html
  */
 class Hybrid_Providers_Facebook extends Hybrid_Provider_Model {
 

@@ -9,7 +9,7 @@
 /**
  * Hybrid_Providers_Foursquare provider adapter based on OAuth2 protocol
  *
- * http://hybridauth.sourceforge.net/userguide/IDProvider_info_Foursquare.html
+ * https://hybridauth.github.io/hybridauth/userguide/IDProvider_info_Foursquare.html
  */
 
 /**
