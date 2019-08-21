@@ -11,7 +11,7 @@
  *
  * used to provider the connected user contacts list on a standardized structure across supported social apis.
  *
- * http://hybridauth.sourceforge.net/userguide/Profile_Data_User_Contacts.html
+ * https://hybridauth.github.io/hybridauth/userguide/Profile_Data_User_Contacts.html
  */
 class Hybrid_User_Contact {
 

@@ -9,7 +9,7 @@
 /**
  * Hybrid_Providers_Google provider adapter based on OAuth2 protocol
  *
- * http://hybridauth.sourceforge.net/userguide/IDProvider_info_Google.html
+ * https://hybridauth.github.io/hybridauth/userguide/IDProvider_info_Google.html
  */
 class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2 {
 
@@ -97,22 +97,22 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2 {
 	function getUserContacts() {
 		// refresh tokens if needed
 		$this->refreshToken();
-		
+
 		$contacts = array();
 		if (!isset($this->config['contacts_param'])) {
 			$this->config['contacts_param'] = array("max-results" => 500);
 		}
-		
+
 		// Google Gmail and Android contacts
 		if (strpos($this->scope, '/m8/feeds/') !== false) {
-			
+
 			$response = $this->api->api("https://www.google.com/m8/feeds/contacts/default/full?"
 					. http_build_query(array_merge(array('alt' => 'json'), $this->config['contacts_param'])));
-			
+
 			if (!$response) {
 				return array();
 			}
-			
+
 			if (isset($response->feed->entry)) {
 				foreach ($response->feed->entry as $idx => $entry) {
 					$uc = new Hybrid_User_Contact();
@@ -148,15 +148,15 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2 {
 					} else {
 						$uc->webSiteURL = '';
 					}
-					
+
 					$contacts[] = $uc;
 				}
 			}
 		}
-		
+
 		return $contacts;
 	}
-	
+
 	/**
 	 * Add query parameters to the $url
 	 *
@@ -164,7 +164,7 @@ class Hybrid_Providers_Google extends Hybrid_Provider_Model_OAuth2 {
 	 * @param array  $params Parameters to add
 	 * @return string
 	 */
-	function addUrlParam($url, array $params){		
+	function addUrlParam($url, array $params){
 		$query = parse_url($url, PHP_URL_QUERY);
 
 		// Returns the URL string with new parameters

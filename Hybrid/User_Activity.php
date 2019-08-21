@@ -11,7 +11,7 @@
  *
  * used to provider the connected user activity stream on a standardized structure across supported social apis.
  *
- * http://hybridauth.sourceforge.net/userguide/Profile_Data_User_Activity.html
+ * https://hybridauth.github.io/hybridauth/userguide/Profile_Data_User_Activity.html
  */
 class Hybrid_User_Activity {
 

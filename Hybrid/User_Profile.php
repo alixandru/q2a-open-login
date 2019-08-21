@@ -13,7 +13,7 @@
  * The Hybrid_User_Profile object is populated with as much information about the user as
  * HybridAuth was able to pull from the given API or authentication provider.
  *
- * http://hybridauth.sourceforge.net/userguide/Profile_Data_User_Profile.html
+ * https://hybridauth.github.io/hybridauth/userguide/Profile_Data_User_Profile.html
  */
 class Hybrid_User_Profile {
 
