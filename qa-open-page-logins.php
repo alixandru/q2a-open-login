@@ -714,6 +714,10 @@ class qa_open_logins_page {
 
 	function get_ha_config($provider, $url) {
 		$key = strtolower($provider);
+
+		require_once $this->directory . 'qa-open-utils.php';
+		$scope = qa_open_login_get_provider_scope($provider);
+
 		return array(
 			'base_url' => $url,
 			'providers' => array (
@@ -724,11 +728,11 @@ class qa_open_logins_page {
 						'key' => qa_opt("{$key}_app_id"),
 						'secret' => qa_opt("{$key}_app_secret")
 					),
-					'scope' => $provider == 'Facebook' ? 'email,user_about_me,user_location,user_website' : null,
+					'scope' => $scope,
 				)
 			),
-			'debug_mode' => false,
-			'debug_file' => ''
+			'debug_mode' => true,
+			'debug_file' => '/home/neayicomwl/questions/auth.log'
 		);
 	}
 
@@ -892,11 +896,26 @@ class qa_open_logins_page {
 				);
 			}
 
-			$form['fields'][] = array(
-				'type' => 'static',
-				'label' => 'Callback URL/Redirect URL (to use when registering your application with ' . $provider . '): <br /><strong>' .
-							qa_opt('site_url') . '?hauth.done=' . $provider . '</strong>',
-			);
+			switch ($provider)
+			{
+				case 'Twitter':
+				case 'Live':
+					$form['fields'][] = array(
+						'type' => 'static',
+						'label' => 'Callback URL/Redirect URL (to use when registering your application with ' . $provider . '): <br /><strong>' .
+									qa_opt('site_url') . strtolower($provider) . '.php</strong> (don\'t forget to also copy the file <code>' . strtolower($provider)
+									. '.php</code> from the <code>q2a-open-login</code> folder to the root folder of your q2a installation)',
+					);
+					break;
+
+				default:
+					$form['fields'][] = array(
+						'type' => 'static',
+						'label' => 'Callback URL/Redirect URL (to use when registering your application with ' . $provider . '): <br /><strong>' .
+									qa_opt('site_url') . '?hauth.done=' . $provider . '</strong>',
+					);
+					break;
+			}
 
 			$form['fields'][] = array(
 				'type' => 'static',

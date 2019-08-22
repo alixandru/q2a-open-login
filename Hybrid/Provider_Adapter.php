@@ -165,8 +165,14 @@ class Hybrid_Provider_Adapter {
 
 		# workaround to solve windows live authentication since microsoft disallowed redirect urls to contain any parameters
 		# http://mywebsite.com/path_to_hybridauth/?hauth.done=Live will not work
-		if ($this->id=="Live") { 
-			$this->params["login_done"] = $HYBRID_AUTH_URL_BASE."live.php"; 
+		if ($this->id=="Live") {
+			$this->params["login_done"] = $HYBRID_AUTH_URL_BASE."live.php";
+		}
+
+		# workaround to solve twitter authentication since Twitter disallowed redirect urls to contain any parameters
+		# http://mywebsite.com/path_to_hybridauth/?hauth.done=Twitter will not work
+		if ($this->id=="Twitter") {
+			$this->params["login_done"] = $HYBRID_AUTH_URL_BASE."twitter.php";
 		}
 
 		# Workaround to fix broken callback urls for the Facebook OAuth client
@@ -190,7 +196,7 @@ class Hybrid_Provider_Adapter {
 
 		// redirect
 		if (empty($this->params["redirect_mode"])) {
-			Hybrid_Auth::redirect($this->params["login_start"]);	
+			Hybrid_Auth::redirect($this->params["login_start"]);
 		} else {
 			Hybrid_Auth::redirect($this->params["login_start"],$this->params["redirect_mode"]);
 		}
