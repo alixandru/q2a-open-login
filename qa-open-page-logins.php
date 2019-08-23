@@ -83,7 +83,6 @@ class qa_open_logins_page {
 		require_once $this->directory . 'qa-open-utils.php';
 
 		//	Check we're not using single-sign on integration, that we're logged in
-
 		if (QA_FINAL_EXTERNAL_USERS)
 			qa_fatal_error('User accounts are handled by external code');
 
@@ -310,7 +309,10 @@ class qa_open_logins_page {
 		$action = null;
 		$key = null;
 
-		if( !empty($_REQUEST['hauth_start']) ) {
+		if (isset($_REQUEST['provider'])) {
+			$key = trim(strip_tags($_REQUEST['provider']));
+			$action = 'process';
+		} else if( !empty($_REQUEST['hauth_start']) ) {
 			$key = trim(strip_tags($_REQUEST['hauth_start']));
 			$action = 'process';
 
@@ -330,13 +332,14 @@ class qa_open_logins_page {
 		$provider = $this->get_ha_provider($key);
 		$source = strtolower($provider);
 
-		if($action == 'login') {
+//		if($action == 'login') {
 			// handle the login
 
 			// after login come back to the same page
 			$loginCallback = qa_path('', array(), qa_opt('site_url'));
 
-			require_once( $this->directory . 'Hybrid/Auth.php' );
+			require_once( $this->directory . 'HybridAuth/autoload.php' );
+//						require_once( $this->directory . 'Hybrid/Auth.php' );
 			require_once( $this->directory . 'qa-open-utils.php' );
 
 			// prepare the configuration of HybridAuth
@@ -404,13 +407,13 @@ class qa_open_logins_page {
 			} catch(Exception $e) {
 				qa_redirect('logins', array('provider' => $provider, 'code' => $e->getCode()));
 			}
-		}
+//		}
 
-		if($action == 'process') {
-			require_once( "Hybrid/Auth.php" );
-			require_once( "Hybrid/Endpoint.php" );
-			Hybrid_Endpoint::process();
-		}
+		// if($action == 'process') {
+		// 	require_once( "Hybrid/Auth.php" );
+		// 	require_once( "Hybrid/Endpoint.php" );
+		// 	Hybrid_Endpoint::process();
+		// }
 
 		return false;
 	}
@@ -719,7 +722,7 @@ class qa_open_logins_page {
 		$scope = qa_open_login_get_provider_scope($provider);
 
 		return array(
-			'base_url' => $url,
+			'callback' => $url,
 			'providers' => array (
 				$provider => array (
 					'enabled' => true,
@@ -731,7 +734,7 @@ class qa_open_logins_page {
 					'scope' => $scope,
 				)
 			),
-			'debug_mode' => true,
+			'debug_mode' => 'debug',
 			'debug_file' => '/home/neayicomwl/questions/auth.log'
 		);
 	}
@@ -755,7 +758,7 @@ class qa_open_logins_page {
 		if (qa_clicked('general_save_button')) {
 
 			// loop through all providers and see which one was enabled
-			$allProviders = scandir( $this->directory . 'Hybrid' . DIRECTORY_SEPARATOR . 'Providers' );
+			$allProviders = scandir( $this->directory . 'HybridAuth' . DIRECTORY_SEPARATOR . 'Provider' );
 
 			$activeProviders = array();
 			foreach($allProviders as $providerFile) {
@@ -841,8 +844,7 @@ class qa_open_logins_page {
 			),
 		);
 
-
-		$allProviders = scandir( $this->directory . 'Hybrid' . DIRECTORY_SEPARATOR . 'Providers' );
+		$allProviders = scandir( $this->directory . 'HybridAuth' . DIRECTORY_SEPARATOR . 'Provider' );
 
 		foreach($allProviders as $providerFile) {
 			if(substr($providerFile,0,1) == '.' || $providerFile == 'OpenID.php') {

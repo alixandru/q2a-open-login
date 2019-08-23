@@ -44,7 +44,10 @@ class qa_open_login {
 		$action = null;
 		$key = null;
 
-		if( !empty($_GET['hauth_start']) ) {
+		if (isset($_GET['provider'])) {
+			$key = trim(strip_tags($_GET['provider']));
+			$action = 'process';
+		} else if( !empty($_GET['hauth_start']) ) {
 			$key = trim(strip_tags($_GET['hauth_start']));
 			$action = 'process';
 
@@ -68,13 +71,13 @@ class qa_open_login {
 			return false;
 		}
 
-		if($action == 'login') {
+//		if($action == 'login') {
 			// handle the login
 
 			// after login come back to the same page
 			$loginCallback = qa_path('', array(), qa_opt('site_url'));
 
-			require_once $this->directory . 'Hybrid/Auth.php';
+			require_once $this->directory . 'HybridAuth/autoload.php';
 			require_once $this->directory . 'qa-open-utils.php';
 
 			// prepare the configuration of HybridAuth
@@ -87,7 +90,16 @@ class qa_open_login {
 
 			try {
 				// try to login
-				$hybridauth = new Hybrid_Auth( $config );
+				$hybridauth = new Hybridauth\Hybridauth( $config );
+
+				// Validate provider exists in the $config
+				// if (in_array($key, $hybridauth->getProviders())) {
+				// 	// Store the provider for the callback event
+				// 	$storage->set('provider', $key);
+				// } else {
+				// 	$error = $key;
+				// }
+
 				$adapter = $hybridauth->authenticate( $this->provider );
 
 				// if ok, create/refresh the user account
@@ -129,13 +141,13 @@ class qa_open_login {
 				// redirect
 				qa_redirect_raw(qa_opt('site_url') . $topath);
 			}
-		}
+//		}
 
-		if($action == 'process') {
-			require_once( "Hybrid/Auth.php" );
-			require_once( "Hybrid/Endpoint.php" );
-			Hybrid_Endpoint::process();
-		}
+//		if($action == 'process') {
+//			require_once( "Hybrid/Auth.php" );
+//			require_once( "Hybrid/Endpoint.php" );
+//			Hybrid_Endpoint::process();
+//		}
 
 		return false;
 	}
@@ -145,18 +157,19 @@ class qa_open_login {
 		// after login come back to the same page
 		$loginCallback = qa_path('', array(), qa_opt('site_url'));
 
-		require_once( "Hybrid/Auth.php" );
+//		require_once( "Hybrid/Auth.php" );
+		require_once $this->directory . 'HybridAuth/autoload.php';
 
 		// prepare the configuration of HybridAuth
 		$config = $this->getConfig($loginCallback);
 
 		try {
 			// try to logout
-			$hybridauth = new Hybrid_Auth( $config );
+			$hybridauth = new Hybridauth\Hybridauth( $config );
 
 			if($hybridauth->isConnectedWith( $this->provider )) {
 				$adapter = $hybridauth->getAdapter( $this->provider );
-				$adapter->logout();
+				$adapter->disconnect();
 			}
 
 		} catch(Exception $e) {
@@ -285,7 +298,7 @@ HTML;
 		$scope = qa_open_login_get_provider_scope($this->provider);
 
 		return array(
-			'base_url' => $url,
+			'callback' => $url,
 			'providers' => array (
 				$this->provider => array (
 					'enabled' => true,
@@ -297,7 +310,7 @@ HTML;
 					'scope' => $scope,
 				)
 			),
-			'debug_mode' => true,
+			'debug_mode' => 'debug',
 			'debug_file' => '/home/neayicomwl/questions/auth.log'
 		);
 	}
