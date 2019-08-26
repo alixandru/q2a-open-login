@@ -2,7 +2,7 @@
 
 ## About ##
 
-This is a plugin for **Question2Answer** that allows users to log in via Facebook, Google, Yahoo, Github and other OAuth/OpenID providers. 
+This is a plugin for **Question2Answer** that allows users to log in via Facebook, Google, Yahoo, Github and other OAuth/OpenID providers.
 
 
 ## Description ##
@@ -18,10 +18,10 @@ The plugin also offers the ability to link multiple OpenID/OAuth-powered logins 
 * Make sure the [cURL][] and [JSON][] extensions are installed and enabled in PHP. HybridAuth library requires these extensions in order to work properly.
 * Get the source code for this plugin from [Github][], either using [Git][], or downloading directly:
 
-   - To download using git, install git and then type 
-      
+   - To download using git, install git and then type
+
       `git clone git://github.com/alixandru/q2a-open-login.git open-login`
-      
+
    - To download directly, go to the [project page][Github] and click **[Download ZIP][download]**
 
 * Copy the plugin folder to `qa-plugin` directory. It is recommended to remove the Facebook Login plugin that ships with Q2A.
@@ -31,7 +31,7 @@ The plugin also offers the ability to link multiple OpenID/OAuth-powered logins 
 ## Configuration ##
 
 * Go to **Admin -> Plugins** on your Q2A installation and enable the providers which you would like to use. For all OAuth-based providers (all, except Yahoo, which uses OpenID) you need to provide some keys after you register your application with them. Check the documentation URL below each login provider in the administration page; it will take you to the HybridAuth documentation page which contains information on how to register your application and what Callback URL to use.
-* Optionally, add the contents of the *qa-open-login.css* file to your theme's CSS file and select the option **Don't inline CSS** from the **Open Login Configuration** section on the **Admin -> Plugins** page. 
+* Optionally, add the contents of the *qa-open-login.css* file to your theme's CSS file and select the option **Don't inline CSS** from the **Open Login Configuration** section on the **Admin -> Plugins** page.
 * Optionally, enable stylish CSS icons for the login links (through the *Zocial* pack) by selecting the option **Use Zocial buttons** from the **Open Login Configuration** section on the **Admin -> Plugins** page. In case you are using a custom theme, you need to perform an extra step: manually modify the theme's CSS file to import `zocial.css` file (usually by adding `@import url('/path-to-q2a/qa-plugin/q2a-open-login/css/zocial.css');` at the top of the file). Please note that, according to the URL of your Q2A instance, you might need to adjust the paths in the CSS file.
 
 ### How to use the Google Signin Button ?
@@ -57,11 +57,11 @@ For a better integration with the Snowflat theme 1.4 (a default theme provided w
 
 ### Adding new login providers ###
 
-Since this plugin is based on [HybridAuth](http://hybridauth.sourceforge.net/), you can easily add new login providers to your Q2A site. All you need to do is to add the provider PHP file to the `Hybrid/Providers` folder and configure it from the Administration page. That's it! New providers can be downloaded from HybridAuth website.
+Since this plugin is based on [HybridAuth](https://hybridauth.github.io/), you can easily add new login providers to your Q2A site. All you need to do configure the providers you need from the Administration page. That's it!
 
 ### Handling login errors ###
 
-Whenever a login attempt fails, the user will be redirected to the original page but no error message will be displayed. This is to save end-users from technical error messages which would not help them much anyway. If you instead would like to show an error message, you can do that through a layer or a custom theme. 
+Whenever a login attempt fails, the user will be redirected to the original page but no error message will be displayed. This is to save end-users from technical error messages which would not help them much anyway. If you instead would like to show an error message, you can do that through a layer or a custom theme.
 
 If something happens with the login process and authentication cannot be done, the user will be redirected to a page whose URL follows the following pattern: `yoursite.com/?provider=X&code=0`. The custom layer or theme could check if the two parameters are present in the URL and display an error message based on the code number. The descriptions of the error codes are below.
 
@@ -107,7 +107,7 @@ Don't edit the string on the left-hand side. Once you've completed the translati
 * Update CSS file. Important! If a custom theme is used it must be manually updated.
 * Translation files (Russian, Spanish and French) have been removed because of the massive translation changes in this new version.
 
-Due to navigation menu changes in Q2A version 1.6.3, the plugin now requires Q2A 1.6.3. Older versions of Q2A should use a previous version of the plugin. 
+Due to navigation menu changes in Q2A version 1.6.3, the plugin now requires Q2A 1.6.3. Older versions of Q2A should use a previous version of the plugin.
 
 
 **v2.1.1**
@@ -160,7 +160,7 @@ Due to navigation menu changes in Q2A version 1.6.3, the plugin now requires Q2A
 
 
 ## Disclaimer ##
-This code has not been extensively tested on high-traffic installations of Q2A. You should perform your own tests before using this plugin on a live (production) environment. 
+This code has not been extensively tested on high-traffic installations of Q2A. You should perform your own tests before using this plugin on a live (production) environment.
 
 
 ## License ##
