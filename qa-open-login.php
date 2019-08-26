@@ -310,8 +310,8 @@ HTML;
 					'scope' => $scope,
 				)
 			),
-			'debug_mode' => 'debug',
-			'debug_file' => '/home/neayicomwl/questions/auth.log'
+			'debug_mode' => false,
+			'debug_file' => ''
 		);
 	}
 
