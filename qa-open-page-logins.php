@@ -731,8 +731,8 @@ class qa_open_logins_page {
 					'scope' => $scope,
 				)
 			),
-			'debug_mode' => true,
-			'debug_file' => '/home/neayicomwl/questions/auth.log'
+			'debug_mode' => false,
+			'debug_file' => ''
 		);
 	}
 
