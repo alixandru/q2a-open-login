@@ -616,26 +616,43 @@ class qa_open_logins_page {
 						OP_baseSelected(sel);
 					} else {
 						$(".qa-main form.open-login-others span.qa-form-wide-note").html("' . qa_lang_html('plugin_open/action_info_2') . '");
-						$(".qa-main form.open-login-others input[type=submit]").show();
-						$(".qa-main form.open-login-others input[type=submit]").attr("disabled", false);
+
+						var submitbutton = $(".qa-main form.open-login-others input[type=submit]");
+						if (submitbutton.length == 0)
+							submitbutton = $(".qa-main form.open-login-others button[type=submit]"); // A few themes such as Donut tend to use buttons in place of inputs
+
+						submitbutton.show();
+						submitbutton.attr("disabled", false);
 					}
 				}
 
 				function OP_baseSelected(sel) {
 					if(!sel || sel.selectedIndex == 0) {
 						if(sel) {
-							$(".qa-main form.open-login-others span.qa-form-wide-note").html("' . qa_lang_html('plugin_open/action_info_3') . '")
+							$(".qa-main form.open-login-others span.qa-form-wide-note").html("' . qa_lang_html('plugin_open/action_info_3') . '");
 						} else {
-							$(".qa-main form.open-login-others span.qa-form-wide-note").html("' . qa_lang_html('plugin_open/action_info_1') . '")
+							$(".qa-main form.open-login-others span.qa-form-wide-note").html("' . qa_lang_html('plugin_open/action_info_1') . '");
 						}
-						$(".qa-main form.open-login-others input[type=submit]").hide()
-						$(".qa-main form.open-login-others input[type=submit]").attr("disabled", "disabled")
+
+						var submitbutton = $(".qa-main form.open-login-others input[type=submit]");
+						if (submitbutton.length == 0)
+							submitbutton = $(".qa-main form.open-login-others button[type=submit]"); // A few themes such as Donut tend to use buttons in place of inputs
+
+						submitbutton.hide();
+						submitbutton.attr("disabled", "disabled");
 					} else {
 						if(OP_accValid()) {
-							nam = $("option:selected", sel).attr("title")
-							$(".qa-main form.open-login-others span.qa-form-wide-note").html("<strong>" + nam + "</strong> '  . qa_lang_html('plugin_open/action_info_4') . '")
-							$(".qa-main form.open-login-others input[type=submit]").show()
-							$(".qa-main form.open-login-others input[type=submit]").attr("disabled", false)
+							var nam = $("option:selected", sel).attr("data-original-title");
+							if (nam == "")
+								nam = $("option:selected", sel).attr("title");
+							$(".qa-main form.open-login-others span.qa-form-wide-note").html("<strong>" + nam + "</strong> '  . qa_lang_html('plugin_open/action_info_4') . '");
+
+							var submitbutton = $(".qa-main form.open-login-others input[type=submit]");
+							if (submitbutton.length == 0)
+								submitbutton = $(".qa-main form.open-login-others button[type=submit]"); // A few themes such as Donut tend to use buttons in place of inputs
+
+							submitbutton.show();
+							submitbutton.attr("disabled", false);
 						}
 					}
 				}

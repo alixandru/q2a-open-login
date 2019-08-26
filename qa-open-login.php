@@ -40,114 +40,110 @@ class qa_open_login {
 
 
 	function check_login() {
+		require_once $this->directory . 'HybridAuth/autoload.php';
 
-		$action = null;
-		$key = null;
-
-		if (isset($_GET['provider'])) {
-			$key = trim(strip_tags($_GET['provider']));
-			$action = 'process';
-		} else if( !empty($_GET['hauth_start']) ) {
-			$key = trim(strip_tags($_GET['hauth_start']));
-			$action = 'process';
-
-		} else if( !empty($_GET['hauth_done']) ) {
-			$key = trim(strip_tags($_GET['hauth_done']));
-			$action = 'process';
-
-		} else if( !empty($_GET['login']) ) {
-			$key = trim(strip_tags($_GET['login']));
-			$action = 'login';
-
-		} else if(isset($_GET['fb_source']) && $_GET['fb_source'] == 'appcenter' &&
-				isset($_SERVER['HTTP_REFERER']) && stristr($_SERVER['HTTP_REFERER'], 'www.facebook.com') !== false &&
-				isset($_GET['fb_appcenter']) && $_GET['fb_appcenter'] == '1' && isset($_GET['code']) ) {
-			// allow AppCenter users to login directly
-			$key = 'facebook';
-			$action = 'login';
-		}
-
-		if($key == null || strcasecmp($key, $this->provider) != 0) {
-			return false;
-		}
-
-//		if($action == 'login') {
-			// handle the login
+		try {
 
 			// after login come back to the same page
 			$loginCallback = qa_path('', array(), qa_opt('site_url'));
 
-			require_once $this->directory . 'HybridAuth/autoload.php';
 			require_once $this->directory . 'qa-open-utils.php';
 
 			// prepare the configuration of HybridAuth
 			$config = $this->getConfig($loginCallback);
 
-			$topath = qa_get('to');
-			if(!isset($topath)) {
-				$topath = ''; // redirect to front page
-			}
+			// try to login
+			$hybridauth = new Hybridauth\Hybridauth($config);
+			$storage = new Hybridauth\Storage\Session();
+			$error = false;
 
-			try {
-				// try to login
-				$hybridauth = new Hybridauth\Hybridauth( $config );
 
+			//
+			// Event 1: User clicked SIGN-IN link
+			//
+			if (isset($_GET['login'])) {
 				// Validate provider exists in the $config
-				// if (in_array($key, $hybridauth->getProviders())) {
-				// 	// Store the provider for the callback event
-				// 	$storage->set('provider', $key);
-				// } else {
-				// 	$error = $key;
-				// }
-
-				$adapter = $hybridauth->authenticate( $this->provider );
-
-				// if ok, create/refresh the user account
-				$user = $adapter->getUserProfile();
-
-				$duplicates = 0;
-				if (!empty($user))
-					$duplicates = qa_log_in_external_user($key, $user->identifier, array(
-						'email' => @$user->email,
-						'handle' => @$user->displayName,
-						'confirmed' => !empty($user->emailVerified),
-						'name' => @$user->displayName,
-						'location' => @$user->region,
-						'website' => @$user->webSiteURL,
-						'about' => @$user->description,
-						'avatar' => strlen(@$user->photoURL) ? qa_retrieve_url($user->photoURL) : null,
-					));
-
-				if($duplicates > 0) {
-					qa_redirect('logins', array('confirm' => '1', 'to' => $topath));
+				if ($_GET['login'] == strtolower($this->provider)) {
+					// Store the provider for the callback event
+					$storage->set('provider', $this->provider);
 				} else {
-					qa_redirect_raw(qa_opt('site_url') . $topath);
+					$error = $_GET['login'];
 				}
-
-			} catch(Exception $e) {
-				// not really interested in the error message - for now
-				// however, in case we have errors 6 or 7, then we have to call logout to clean everything up
-				if($e->getCode() == 6 || $e->getCode() == 7) {
-					$adapter->logout();
-				}
-
-				$qry = 'provider=' . $this->provider . '&code=' . $e->getCode();
-				if(strstr($topath, '?') === false) {
-					$topath .= '?' . $qry;
-				} else {
-					$topath .= '&' . $qry;
-				}
-
-				// redirect
-				qa_redirect_raw(qa_opt('site_url') . $topath);
 			}
-//		}
 
-//		if($action == 'process') {
-//			require_once( "Hybrid/Auth.php" );
-//			require_once( "Hybrid/Endpoint.php" );
-//			Hybrid_Endpoint::process();
-//		}
+			//
+			// Event 2: User clicked LOGOUT link
+			//
+			if (isset($_GET['logout'])) {
+				if (in_array($_GET['logout'], $hybridauth->getProviders())) {
+					// Disconnect the adapter
+					$adapter = $hybridauth->getAdapter($_GET['logout']);
+					$adapter->disconnect();
+				} else {
+					$error = $_GET['logout'];
+				}
+			}
+
+			//
+			// Event 3: Provider returns via CALLBACK
+			//
+			if ($provider = $storage->get('provider')) {
+
+				if ($provider == $this->provider)
+				{
+					$hybridauth->authenticate($provider);
+					$storage->set('provider', null);
+
+					// Retrieve the provider record
+					$adapter = $hybridauth->getAdapter($provider);
+					$user = $adapter->getUserProfile();
+
+					$duplicates = 0;
+					if (!empty($user))
+						$duplicates = qa_log_in_external_user($provider, $user->identifier, array(
+							'email' => @$user->email,
+							'handle' => @$user->displayName,
+							'confirmed' => !empty($user->emailVerified),
+							'name' => @$user->displayName,
+							'location' => @$user->region,
+							'website' => @$user->webSiteURL,
+							'about' => @$user->description,
+							'avatar' => strlen(@$user->photoURL) ? qa_retrieve_url($user->photoURL) : null,
+						));
+
+					// Now redirects:
+					$topath = qa_get('to');
+					if (!isset($topath)) {
+						$topath = ''; // redirect to front page
+					}
+
+					if($duplicates > 0) {
+						qa_redirect('logins', array('confirm' => '1', 'to' => $topath));
+					} else {
+						qa_redirect_raw(qa_opt('site_url') . $topath);
+					}
+				}
+			}
+
+		} catch (Exception $e) {
+			error_log($e->getMessage());
+
+			// not really interested in the error message - for now
+			// however, in case we have errors 6 or 7, then we have to call logout to clean everything up
+			if($e->getCode() == 6 || $e->getCode() == 7) {
+				$adapter->logout();
+			}
+
+			$qry = 'provider=' . $this->provider . '&code=' . $e->getCode();
+			if(strstr($topath, '?') === false) {
+				$topath .= '?' . $qry;
+			} else {
+				$topath .= '&' . $qry;
+			}
+
+			// redirect
+			qa_redirect_raw(qa_opt('site_url') . $topath);
+		}
 
 		return false;
 	}
@@ -157,7 +153,6 @@ class qa_open_login {
 		// after login come back to the same page
 		$loginCallback = qa_path('', array(), qa_opt('site_url'));
 
-//		require_once( "Hybrid/Auth.php" );
 		require_once $this->directory . 'HybridAuth/autoload.php';
 
 		// prepare the configuration of HybridAuth
