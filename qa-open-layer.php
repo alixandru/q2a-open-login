@@ -98,6 +98,7 @@ class qa_html_theme_layer extends qa_html_theme_base
 
 		$hidecss = qa_opt('open_login_css') == '1';
 		$zocial = qa_opt('open_login_zocial') == '1';
+		$donut = qa_opt('open_login_donut') == '1'; // use donut theme
 
 		if (!$hidecss) {
 			// display CSS inline
@@ -116,6 +117,12 @@ class qa_html_theme_layer extends qa_html_theme_base
 			if($zocial) {
 				$this->output('<style type="text/css"><!--');
 				$this->output("@import url('{$path}css/zocial.css');");
+				$this->output('//--></style>');
+			}
+
+			if ($donut) {
+				$this->output('<style type="text/css"><!--');
+				$this->output("@import url('{$path}css/bootstrap-social.css');");
 				$this->output('//--></style>');
 			}
 		}

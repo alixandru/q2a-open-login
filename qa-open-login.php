@@ -203,12 +203,11 @@ class qa_open_login {
 
 
 	static function printCode($provider, $tourl, $context, $action = 'login', $print = true) {
+		$zocial = qa_opt('open_login_zocial') == '1' ? 'zocial' : ''; // use zocial buttons
+		$donut = qa_opt('open_login_donut') == '1' ? 'donut' : ''; // use donut theme
+		$donut_classes = '';
+
 		$css = $key = strtolower($provider);
-		if ($key == 'live') {
-			$css = 'windows'; // translate provider name to zocial css class
-		} else if ($key == 'googleplus') {
-			$provider = 'Google+';
-		}
 		$showInHeader = qa_opt("{$key}_app_shortcut") ? true : false;
 
 		if($action == 'login' && !$showInHeader && $context == 'menu') {
@@ -216,12 +215,23 @@ class qa_open_login {
 			return;
 		}
 
-		$zocial = qa_opt('open_login_zocial') == '1' ? 'zocial' : ''; // use zocial buttons
+		if (!empty($zocial))
+		{
+			if ($key == 'live') {
+				$css = 'windows'; // translate provider name to zocial css class
+			} else if ($key == 'googleplus') {
+				$provider = 'Google+';
+			}
+		}
+
 		if($action == 'logout') {
 			$url = $tourl;
 			$classes = "$context action-logout $zocial $css";
 			$title = qa_lang_html('main/nav_logout');
 			$text = qa_lang_html('main/nav_logout');
+
+			if (!empty($donut))
+				$donut_classes = 'btn-block';
 
 		} else if($action == 'login') {
 			$topath = qa_get('to'); // lets user switch between login and register without losing destination page
@@ -241,22 +251,14 @@ class qa_open_login {
 				$url .= '&amp;to=' . htmlspecialchars($tourl); // play nice with validators
 			}
 			$classes = "$context action-login $zocial  $css";
-			$title = qa_lang_html_sub('plugin_open/login_using', $provider);
-			$text = ($key == 'google')?"Connexion avec Google":$provider . ' ' . qa_lang_html('main/nav_login');
+			$text = $title = qa_lang_html_sub('plugin_open/login_using', $provider);
 
 			if($context != 'menu') {
 				$text = $title;
 			}
 
-		} else if($action == 'link') {
-			$url = qa_path('logins', array('link' => $key), qa_path_to_root()); // build our own url
-			$classes = "$context action-link $zocial $css";
-			$title = qa_lang_html_sub('plugin_open/login_using', $provider);
-			$text = qa_lang_html('main/nav_login');
-
-			if($context != 'menu') {
-				$text = $title;
-			}
+			if (!empty($donut))
+				$donut_classes = 'btn-block';
 
 		} else if($action == 'view') {
 			$url = 'javascript://';
@@ -265,16 +267,15 @@ class qa_open_login {
 			$text = $tourl;
 		}
 
-		if ($key == 'google' && in_array($action, array('login', 'view', 'link'))) {
+		if (empty($donut))
+		{
 			$html = <<<HTML
-  <a class="google-signin" href="$url">
-  	  <span class="google-signin-icon"></span>
-      <span class="google-signin-text">$text</span>
-  </a>
+			<a class="open-login-button context-$classes" title="$title" href="$url" rel="nofollow">$text</a>
 HTML;
-		} else {
+		}
+		else {
 			$html = <<<HTML
-  <a class="open-login-button context-$classes" title="$title" href="$url" rel="nofollow">$text</a>
+			<a class="btn $donut_classes btn-social btn-$key" href="$url" rel="nofollow"><span class="fa fa-$key"></span> $text</a>
 HTML;
 		}
 

@@ -350,12 +350,13 @@ class qa_open_logins_page {
 				if($useraccount['sessionsource'] != $s) {
 					$del_html = '<a href="javascript://" onclick="OP_unlink(\'' . $login['source'] . '_' . md5($login['identifier']) . '\')" class="opacxdel qa-form-light-button-reject" title="'. qa_lang_html('plugin_open/unlink_this_account') .'">&nbsp;</a>';
 
-					// If we're using the Donut theme, use a button instead of a link. The test is actually quite ugly, couldn't
-					// find anything better:
-					if (qa_opt('site_theme') == 'Donut-theme')
+					$donut = qa_opt('open_login_donut') == '1'; // use donut theme
+
+					// If we're using the Donut theme, use a button instead of a link.
+					if ($donut)
 					{
 						$baseclass = 'opacxdel qa-form-light-button qa-form-light-button-unlink';
-						$del_html =  '<button onclick="OP_unlink(\'' . $login['source'] . '_' . md5($login['identifier']) . '\')" title="'. qa_lang_html('plugin_open/unlink_this_account') .'" type="submit"  class="' . $baseclass . '">&nbsp;</button>';
+						$del_html =  ' <button onclick="OP_unlink(\'' . $login['source'] . '_' . md5($login['identifier']) . '\')" title="'. qa_lang_html('plugin_open/unlink_this_account') .'" type="submit"  class="' . $baseclass . '">&nbsp;</button>';
 					}
 				}
 
@@ -665,6 +666,9 @@ class qa_open_logins_page {
 			$zocial = qa_post_text('open_login_zocial');
 			qa_opt('open_login_zocial', empty($zocial) ? 0 : 1);
 
+			$donut = qa_post_text('open_login_donut');
+			qa_opt('open_login_donut', empty($donut) ? 0 : 1);
+
 			$nologin = qa_post_text('open_login_hideform');
 			qa_opt('open_login_hideform', empty($nologin) ? 0 : 1);
 
@@ -692,6 +696,12 @@ class qa_open_logins_page {
 				),
 				array(
 					'type' => 'checkbox',
+					'label' => 'Use <a href="https://github.com/amiyasahu/Donut">Donut Theme</a> (uncheck inline css and zocial in this case)',
+					'value' => qa_opt('open_login_donut') ? true : false,
+					'tags' => 'NAME="open_login_donut"',
+				),
+				array(
+					'type' => 'checkbox',
 					'label' => 'Hide regular login/register forms and keep only external login buttons (might require theme changes)',
 					'value' => qa_opt('open_login_hideform') ? true : false,
 					'tags' => 'NAME="open_login_hideform"',
@@ -704,10 +714,11 @@ class qa_open_logins_page {
 				),
 				array(
 					'type' => 'static',
-					'label' => 'Note: the callback URLs/Redirect URLs (to use when registering your application): <br />
-								<strong>' . qa_opt('site_url') . 'index.php</strong> and <strong>' . qa_opt('site_url') . '</strong>.
+					'label' => 'Note: <i>use the following callback URLs/Redirect URLs when registering your application: <br />
+								<strong><code>' . qa_opt('site_url') . 'index.php</code></strong> and
+								<strong><code>' . qa_opt('site_url') . '</code></strong>.
 								Also, if you are using both HTTP and HTTPS, you will need to register both callback URLs for
-								each protocole.',
+								each protocole.</i>',
 				),
 				array(
 					'type' => 'static',
