@@ -100,11 +100,8 @@ class qa_open_logins_page {
 		//  Check if we're unlinking an account
 		$mylogins = $this->check_unlink($useraccount);
 
-		//  Check if we need to associate another provider
-		$tolink = $this->check_associate($useraccount);
-
 		//  Check if we're merging multiple accounts
-		$otherlogins = $this->check_merge($useraccount, $mylogins, $tolink);
+		$otherlogins = $this->check_merge($useraccount, $mylogins);
 
 		//	Prepare content for theme
 		$disp_conf = qa_get('confirm') || !empty($tolink);
@@ -120,7 +117,6 @@ class qa_open_logins_page {
 			$this->display_summary($qa_content, $useraccount);
 			$this->display_logins($qa_content, $useraccount, $mylogins);
 			$this->display_duplicates($qa_content, $useraccount, $otherlogins);
-			$this->display_services($qa_content, !empty($mylogins) || !empty($otherlogins));
 
 		} else {
 			// logged in and there are duplicates
@@ -157,7 +153,7 @@ class qa_open_logins_page {
 		}
 	}
 
-	function check_merge(&$useraccount, &$mylogins, $tolink) {
+	function check_merge(&$useraccount, &$mylogins) {
 		global $qa_cached_logged_in_user, $qa_logged_in_userid_checked;
 
 		$userid = $findid = $useraccount['userid'];
@@ -166,12 +162,7 @@ class qa_open_logins_page {
 			$findemail = $useraccount['email']; // fallback
 		}
 
-		if($tolink) {
-			// user is logged in with $userid but wants to merge $findid
-			$findemail = null;
-			$findid = $tolink['userid'];
-
-		} else if(qa_get('confirm') == 2 || qa_post_text('confirm') == 2) {
+		if(qa_get('confirm') == 2 || qa_post_text('confirm') == 2) {
 			// bogus confirm page, stop right here
 			qa_redirect('logins');
 		}
@@ -304,120 +295,6 @@ class qa_open_logins_page {
 		return $mylogins;
 	}
 
-	function check_associate($useraccount) {
-		$userid = $useraccount['userid'];
-		$action = null;
-		$key = null;
-
-		if (isset($_REQUEST['provider'])) {
-			$key = trim(strip_tags($_REQUEST['provider']));
-			$action = 'process';
-		} else if( !empty($_REQUEST['hauth_start']) ) {
-			$key = trim(strip_tags($_REQUEST['hauth_start']));
-			$action = 'process';
-
-		} else if( !empty($_REQUEST['hauth_done']) ) {
-			$key = trim(strip_tags($_REQUEST['hauth_done']));
-			$action = 'process';
-
-		} else if( !empty($_GET['link']) ) {
-			$key = trim(strip_tags($_GET['link']));
-			$action = 'login';
-		}
-
-		if($key == null) {
-			return false;
-		}
-
-		$provider = $this->get_ha_provider($key);
-		$source = strtolower($provider);
-
-//		if($action == 'login') {
-			// handle the login
-
-			// after login come back to the same page
-			$loginCallback = qa_path('', array(), qa_opt('site_url'));
-
-			require_once( $this->directory . 'HybridAuth/autoload.php' );
-//						require_once( $this->directory . 'Hybrid/Auth.php' );
-			require_once( $this->directory . 'qa-open-utils.php' );
-
-			// prepare the configuration of HybridAuth
-			$config = $this->get_ha_config($provider, $loginCallback);
-
-			try {
-				// try to login
-				$hybridauth = new Hybrid_Auth( $config );
-				$adapter = $hybridauth->authenticate( $provider );
-
-				// if ok, create/refresh the user account
-				$user = $adapter->getUserProfile();
-
-				$duplicates = 0;
-				if (!empty($user))
-					// prepare some data
-					$ohandle = null;
-					$oemail = null;
-
-					if(empty($user->displayName)) {
-						$ohandle = $provider;
-					} else {
-						$ohandle = preg_replace('/[\\@\\+\\/]/', ' ', $user->displayName);
-					}
-					if (strlen(@$user->email) && $user->emailVerified) { // only if email is confirmed
-						$oemail = $user->email;
-					}
-
-					$duplicate = qa_db_user_login_find_duplicate__open($source, $user->identifier);
-					if( $duplicate == null ) {
-						// simply create a new login
-						qa_db_user_login_sync(true);
-						qa_db_user_login_add($userid, $source, $user->identifier);
-						if($oemail) qa_db_user_login_set__open($source, $user->identifier, 'oemail', $oemail);
-						qa_db_user_login_set__open($source, $user->identifier, 'ohandle', $ohandle);
-						qa_db_user_login_sync(false);
-
-						// now that everything was added, log out to allow for multiple accounts
-						$adapter->logout();
-
-						// redirect to get rid of parameters
-						qa_redirect('logins');
-
-					} else if($duplicate['userid'] == $userid) {
-						// trying to add the same account, just update the email/handle
-						qa_db_user_login_sync(true);
-						if($oemail) qa_db_user_login_set__open($source, $user->identifier, 'oemail', $oemail);
-						qa_db_user_login_set__open($source, $user->identifier, 'ohandle', $ohandle);
-						qa_db_user_login_sync(false);
-
-						// log out to allow for multiple accounts
-						$adapter->logout();
-
-						// redirect to get rid of parameters
-						qa_redirect('logins');
-
-					} else {
-						if(qa_get('confirm') == 2) {
-							return $duplicate;
-						} else {
-							qa_redirect('logins', array('link' => qa_get('link'), 'confirm' => 2));
-						}
-					}
-
-			} catch(Exception $e) {
-				qa_redirect('logins', array('provider' => $provider, 'code' => $e->getCode()));
-			}
-//		}
-
-		// if($action == 'process') {
-		// 	require_once( "Hybrid/Auth.php" );
-		// 	require_once( "Hybrid/Endpoint.php" );
-		// 	Hybrid_Endpoint::process();
-		// }
-
-		return false;
-	}
-
 	/* *** Display functions *** */
 
 	function display_summary(&$qa_content, $useraccount) {
@@ -472,6 +349,14 @@ class qa_open_logins_page {
 				$s = qa_open_login_get_new_source($login['source'], $login['identifier']);
 				if($useraccount['sessionsource'] != $s) {
 					$del_html = '<a href="javascript://" onclick="OP_unlink(\'' . $login['source'] . '_' . md5($login['identifier']) . '\')" class="opacxdel qa-form-light-button-reject" title="'. qa_lang_html('plugin_open/unlink_this_account') .'">&nbsp;</a>';
+
+					// If we're using the Donut theme, use a button instead of a link. The test is actually quite ugly, couldn't
+					// find anything better:
+					if (qa_opt('site_theme') == 'Donut-theme')
+					{
+						$baseclass = 'opacxdel qa-form-light-button qa-form-light-button-unlink';
+						$del_html =  '<button onclick="OP_unlink(\'' . $login['source'] . '_' . md5($login['identifier']) . '\')" title="'. qa_lang_html('plugin_open/unlink_this_account') .'" type="submit"  class="' . $baseclass . '">&nbsp;</button>';
+					}
 				}
 
 				$data["f$i"] = array(
@@ -700,36 +585,6 @@ class qa_open_logins_page {
 		return false;
 	}
 
-	function display_services(&$qa_content, $has_content) {
-		if(!$has_content) {
-			// no linked logins
-			$qa_content['form_nodata']=array(
-				'title' => '<br>' . qa_lang_html('plugin_open/no_logins_title'),
-				'style' => 'light',
-				'fields' => array(
-					'note' => array(
-						'note' => qa_lang_html('plugin_open/no_logins_text'),
-						'type' => 'static'
-					)
-				),
-			);
-		} else {
-			$qa_content['custom'] = '<h2>' . qa_lang_html('plugin_open/link_with_account') . '</h2><p>' . qa_lang_html('plugin_open/no_logins_text') . '</p>';
-		}
-
-		// output login providers
-		$loginmodules=qa_load_modules_with('login', 'printCode');
-
-		foreach ($loginmodules as $module) {
-			ob_start();
-			qa_open_login::printCode($module->provider, null, 'associate', 'link');
-			$html=ob_get_clean();
-
-			if (strlen($html))
-				@$qa_content['custom'].= $html.' ';
-		}
-	}
-
 	/* *** Utility functions *** */
 
 	function get_ha_config($provider, $url) {
@@ -849,7 +704,14 @@ class qa_open_logins_page {
 				),
 				array(
 					'type' => 'static',
-					'label' => '<br /><strong>Available login providers</strong>',
+					'label' => 'Note: the callback URLs/Redirect URLs (to use when registering your application): <br />
+								<strong>' . qa_opt('site_url') . 'index.php</strong> and <strong>' . qa_opt('site_url') . '</strong>.
+								Also, if you are using both HTTP and HTTPS, you will need to register both callback URLs for
+								each protocole.',
+				),
+				array(
+					'type' => 'static',
+					'label' => '<br /><strong><u>Available login providers</u></strong>',
 				),
 			),
 
@@ -870,6 +732,11 @@ class qa_open_logins_page {
 
 			$provider = str_ireplace('.php', '', $providerFile);
 			$key = strtolower($provider);
+
+			$form['fields'][] = array(
+				'type' => 'static',
+				'label' => '<strong><u><i class="fa fa-'.strtolower($provider).'">&nbsp;</i>' . $provider . '</u></strong>',
+			);
 
 			$form['fields'][] = array(
 				'type' => 'checkbox',
@@ -896,45 +763,6 @@ class qa_open_logins_page {
 				'value' => qa_html(qa_opt("{$key}_app_secret")),
 				'tags' => "NAME=\"{$key}_app_secret_field\"",
 			);
-
-			$docUrl = "https://hybridauth.github.io/hybridauth/userguide/IDProvider_info_{$provider}.html";
-			if($provider == 'Yahoo') {
-				$form['fields'][] = array(
-					'type' => 'static',
-					'label' => 'By default, <strong>' . $provider . '</strong> uses OpenID and does not need any keys, so these fields should ' .
-								'be left blank. However, if you replaced the provider file with the one that uses OAuth, and not OpenID, you ' .
-								'need to provide the app keys. In this case, click on <a href="' . $docUrl . '" target="_blank">' . $docUrl . '</a> ' .
-								'for information on how to get them.',
-				);
-
-			} else {
-				$form['fields'][] = array(
-					'type' => 'static',
-					'label' => 'For information on how to setup your application with <strong>' . $provider . '</strong> ' .
-								'see the <strong>Registering application</strong> section from <a href="' . $docUrl . '" target="_blank">' . $docUrl . '</a>.',
-				);
-			}
-
-			switch ($provider)
-			{
-				case 'Twitter':
-				case 'Live':
-					$form['fields'][] = array(
-						'type' => 'static',
-						'label' => 'Callback URL/Redirect URL (to use when registering your application with ' . $provider . '): <br /><strong>' .
-									qa_opt('site_url') . strtolower($provider) . '.php</strong> (don\'t forget to also copy the file <code>' . strtolower($provider)
-									. '.php</code> from the <code>q2a-open-login</code> folder to the root folder of your q2a installation)',
-					);
-					break;
-
-				default:
-					$form['fields'][] = array(
-						'type' => 'static',
-						'label' => 'Callback URL/Redirect URL (to use when registering your application with ' . $provider . '): <br /><strong>' .
-									qa_opt('site_url') . '?hauth.done=' . $provider . '</strong>',
-					);
-					break;
-			}
 
 			$form['fields'][] = array(
 				'type' => 'static',
