@@ -134,15 +134,10 @@ class qa_open_login {
 				$adapter->logout();
 			}
 
-			$qry = 'provider=' . $this->provider . '&code=' . $e->getCode();
-			if(strstr($topath, '?') === false) {
-				$topath .= '?' . $qry;
-			} else {
-				$topath .= '&' . $qry;
-			}
+			$storage->set('provider', null);
 
 			// redirect
-			qa_redirect_raw(qa_opt('site_url') . $topath);
+			qa_redirect_raw(qa_opt('site_url'));
 		}
 
 		return false;
