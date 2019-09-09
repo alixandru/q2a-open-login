@@ -66,6 +66,9 @@ class qa_open_login {
 				if ($_GET['login'] == strtolower($this->provider)) {
 					// Store the provider for the callback event
 					$storage->set('provider', $this->provider);
+					if ($_GET['to'])
+						$storage->set('redirect_to', $_GET['to']);
+
 				} else {
 					$error = $_GET['login'];
 				}
@@ -112,10 +115,8 @@ class qa_open_login {
 						));
 
 					// Now redirects:
-					$topath = qa_get('to');
-					if (!isset($topath)) {
-						$topath = ''; // redirect to front page
-					}
+					$topath = $storage->get('redirect_to');
+					$storage->set('redirect_to', null);
 
 					if($duplicates > 0) {
 						qa_redirect('logins', array('confirm' => '1', 'to' => $topath));

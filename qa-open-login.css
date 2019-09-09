@@ -8,7 +8,7 @@
 		margin-top: 5px;
 		width: 30%;
 	}
-	
+
 	.open-login-button.context-sidebar {
 		font-weight: bold;
 		margin: 0 10px 5px 10px;
@@ -20,32 +20,37 @@
 		margin-top: -4px;
 		font-size: 11px;
 	}
-	
+
 	.open-login-profile, .open-login-accounts, .open-login-others {
 		padding-bottom: 40px;
 		border-bottom: 1px solid gray;
 	}
-	
+
 	.qa-nav-user { /* this should not have negative effects */
 		height: 24px;
 		margin-top: 4px;
 	}
-	
+
 	.open-login-others .opacxhtml select {
 		margin: 5px 0;
 	}
-	
+
 	.open-login-others .opacxhtml {
 		padding-left: 35px;
 	}
-	
+
 	.open-login-accounts a.opacxdel:hover {
 		text-decoration: none;
 	}
-	
+
 	.open-login-accounts a.opacxdel{
 		display: inline-block;
 		line-height: 25px;
 		margin: 0 5px;
+	}
+
+	.open-login-inpage-buttons {
+		max-width: 300px;
+		margin: 30px auto;
 	}
 	/* End of Open Login buttons */

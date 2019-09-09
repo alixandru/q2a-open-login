@@ -127,4 +127,38 @@ class qa_html_theme_layer extends qa_html_theme_base
 			}
 		}
 	}
+
+
+    function error( $error )
+    {
+        if ($this->template == 'ask' && !isset($this->content['form']))
+        {
+			// We try to show the ask form, but no user is connected. Time to show our buttons!
+
+			if (!empty($error))
+			{
+				// Add the buttons to the error string:
+				$loginmodules=qa_load_modules_with('login', 'login_html');
+
+				if(!empty($loginmodules)) {
+
+					$error .= '<p class="open-login-inpage-buttons">';
+
+					foreach ($loginmodules as $tryname => $module) {
+						ob_start();
+						$module->login_html(qa_opt('site_url'), 'sidebar');
+						$label=ob_get_clean();
+
+						if (strlen($label))
+						$error .= $label;
+					}
+
+					$error .= '</p>';
+				}
+			}
+        }
+
+		qa_html_theme_base::error($error);
+    }
+
 }
