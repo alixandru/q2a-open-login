@@ -76,10 +76,11 @@ class qa_open_logins_page {
 	}
 
 	function process_request($request) {
-		require_once QA_INCLUDE_DIR.'qa-db-users.php';
-		require_once QA_INCLUDE_DIR.'qa-app-format.php';
-		require_once QA_INCLUDE_DIR.'qa-app-users.php';
-		require_once QA_INCLUDE_DIR.'qa-db-selects.php';
+		require_once QA_INCLUDE_DIR.'db/users.php';
+		require_once QA_INCLUDE_DIR.'app/format.php';
+		require_once QA_INCLUDE_DIR.'app/users.php';
+		require_once QA_INCLUDE_DIR.'db/selects.php';
+
 		require_once $this->directory . 'qa-open-utils.php';
 
 		//	Check we're not using single-sign on integration, that we're logged in
@@ -182,7 +183,7 @@ class qa_open_logins_page {
 			}
 
 			// a request to merge (link) multiple accounts was made
-			require_once QA_INCLUDE_DIR.'qa-app-users-edit.php';
+			require_once QA_INCLUDE_DIR.'app/users-edit.php';
 			$recompute = false;
 			$email = null;
 			$baseid = $_POST["base{$_POST['domerge']}"]; // POST[base1] or POST[base2]
@@ -216,7 +217,7 @@ class qa_open_logins_page {
 
 			// recompute the stats, if needed
 			if($recompute) {
-				require_once QA_INCLUDE_DIR.'qa-db-points.php';
+				require_once QA_INCLUDE_DIR.'db/points.php';
 				qa_db_userpointscount_update();
 
 				// check if the current account has been deleted
