@@ -70,6 +70,7 @@ function qa_log_in_external_user($source, $identifier, $fields)
 	$remember = qa_opt('open_login_remember') ? true : false;
 
 	$users=qa_db_user_login_find($source, $identifier);
+
 	$countusers=count($users);
 	if ($countusers>1)
 		qa_fatal_error('External login mapped to more than one user'); // should never happen
@@ -100,6 +101,16 @@ function qa_log_in_external_user($source, $identifier, $fields)
 		if($oemail) qa_db_user_login_set__open($source, $identifier, 'oemail', $oemail);
 		qa_db_user_login_set__open($source, $identifier, 'ohandle', $ohandle);
 
+		// Force the reload of the avatar
+		require_once QA_INCLUDE_DIR.'app/blobs.php';
+		$userinfo = qa_db_select_with_pending(qa_db_user_account_selectspec($users[0]['userid'], true));
+
+		if (strlen(@$fields['avatar']) && !qa_blob_exists($userinfo['avatarblobid']))
+		{
+			require_once QA_INCLUDE_DIR.'app/users-edit.php';
+			qa_set_user_avatar($users[0]['userid'], $fields['avatar']);
+		}
+
 		qa_set_logged_in_user($users[0]['userid'], $users[0]['handle'], $remember, $aggsource);
 
 	} else { // create and log in user
@@ -112,6 +123,8 @@ function qa_log_in_external_user($source, $identifier, $fields)
 			//always update email and handle
 			if($oemail) qa_db_user_login_set__open($source, $identifier, 'oemail', $oemail);
 			qa_db_user_login_set__open($source, $identifier, 'ohandle', $ohandle);
+
+			error_log(print_r($fields, true), 0);
 
 			qa_db_user_login_sync(false);
 			qa_set_logged_in_user($users[0]['userid'], $users[0]['handle'], $remember, $aggsource);
