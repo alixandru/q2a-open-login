@@ -6,7 +6,7 @@
 
 	http://www.question2answer.org/
 
-	
+
 	File: qa-plugin/open-login/qa-open-lang-default.php
 	Version: 3.0.0
 	Description: Default English translation of all plugin texts
@@ -16,7 +16,7 @@
 	modify it under the terms of the GNU General Public License
 	as published by the Free Software Foundation; either version 2
 	of the License, or (at your option) any later version.
-	
+
 	This program is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -39,7 +39,7 @@ return array(
 	'no_logins_text' => "Se connecter en utilisant un service de connexion externe pour l'associer à ce compte.",
 	'login_title' => "Se connecter à partir d'un service de connexion externe",
 	'login_description' => 'Choisissez ci-dessous le service avec lequel vous souhaitez vous connecter.',
-	'login_using' => 'Se connecter en utilisant ^',
+	'login_using' => 'Connexion avec ^',
 	'password' => 'mot de passe',
 	'continue' => 'Continuer',
 	'choose_action' => 'Choisissez ce que vous voulez faire:',

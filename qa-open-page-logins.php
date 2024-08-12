@@ -76,10 +76,11 @@ class qa_open_logins_page {
 	}
 
 	function process_request($request) {
-		require_once QA_INCLUDE_DIR.'qa-db-users.php';
-		require_once QA_INCLUDE_DIR.'qa-app-format.php';
-		require_once QA_INCLUDE_DIR.'qa-app-users.php';
-		require_once QA_INCLUDE_DIR.'qa-db-selects.php';
+		require_once QA_INCLUDE_DIR.'db/users.php';
+		require_once QA_INCLUDE_DIR.'app/format.php';
+		require_once QA_INCLUDE_DIR.'app/users.php';
+		require_once QA_INCLUDE_DIR.'db/selects.php';
+
 		require_once $this->directory . 'qa-open-utils.php';
 
 		//	Check we're not using single-sign on integration, that we're logged in
@@ -100,11 +101,8 @@ class qa_open_logins_page {
 		//  Check if we're unlinking an account
 		$mylogins = $this->check_unlink($useraccount);
 
-		//  Check if we need to associate another provider
-		$tolink = $this->check_associate($useraccount);
-
 		//  Check if we're merging multiple accounts
-		$otherlogins = $this->check_merge($useraccount, $mylogins, $tolink);
+		$otherlogins = $this->check_merge($useraccount, $mylogins);
 
 		//	Prepare content for theme
 		$disp_conf = qa_get('confirm') || !empty($tolink);
@@ -120,7 +118,6 @@ class qa_open_logins_page {
 			$this->display_summary($qa_content, $useraccount);
 			$this->display_logins($qa_content, $useraccount, $mylogins);
 			$this->display_duplicates($qa_content, $useraccount, $otherlogins);
-			$this->display_services($qa_content, !empty($mylogins) || !empty($otherlogins));
 
 		} else {
 			// logged in and there are duplicates
@@ -157,7 +154,7 @@ class qa_open_logins_page {
 		}
 	}
 
-	function check_merge(&$useraccount, &$mylogins, $tolink) {
+	function check_merge(&$useraccount, &$mylogins) {
 		global $qa_cached_logged_in_user, $qa_logged_in_userid_checked;
 
 		$userid = $findid = $useraccount['userid'];
@@ -166,12 +163,7 @@ class qa_open_logins_page {
 			$findemail = $useraccount['email']; // fallback
 		}
 
-		if($tolink) {
-			// user is logged in with $userid but wants to merge $findid
-			$findemail = null;
-			$findid = $tolink['userid'];
-
-		} else if(qa_get('confirm') == 2 || qa_post_text('confirm') == 2) {
+		if(qa_get('confirm') == 2 || qa_post_text('confirm') == 2) {
 			// bogus confirm page, stop right here
 			qa_redirect('logins');
 		}
@@ -191,7 +183,7 @@ class qa_open_logins_page {
 			}
 
 			// a request to merge (link) multiple accounts was made
-			require_once QA_INCLUDE_DIR.'qa-app-users-edit.php';
+			require_once QA_INCLUDE_DIR.'app/users-edit.php';
 			$recompute = false;
 			$email = null;
 			$baseid = $_POST["base{$_POST['domerge']}"]; // POST[base1] or POST[base2]
@@ -225,7 +217,7 @@ class qa_open_logins_page {
 
 			// recompute the stats, if needed
 			if($recompute) {
-				require_once QA_INCLUDE_DIR.'qa-db-points.php';
+				require_once QA_INCLUDE_DIR.'db/points.php';
 				qa_db_userpointscount_update();
 
 				// check if the current account has been deleted
@@ -472,6 +464,15 @@ class qa_open_logins_page {
 				$s = qa_open_login_get_new_source($login['source'], $login['identifier']);
 				if($useraccount['sessionsource'] != $s) {
 					$del_html = '<a href="javascript://" onclick="OP_unlink(\'' . $login['source'] . '_' . md5($login['identifier']) . '\')" class="opacxdel qa-form-light-button-reject" title="'. qa_lang_html('plugin_open/unlink_this_account') .'">&nbsp;</a>';
+
+					$donut = qa_opt('open_login_donut') == '1'; // use donut theme
+
+					// If we're using the Donut theme, use a button instead of a link.
+					if ($donut)
+					{
+						$baseclass = 'opacxdel qa-form-light-button qa-form-light-button-unlink';
+						$del_html =  ' <button onclick="OP_unlink(\'' . $login['source'] . '_' . md5($login['identifier']) . '\')" title="'. qa_lang_html('plugin_open/unlink_this_account') .'" type="submit"  class="' . $baseclass . '">&nbsp;</button>';
+					}
 				}
 
 				$data["f$i"] = array(
@@ -700,36 +701,6 @@ class qa_open_logins_page {
 		return false;
 	}
 
-	function display_services(&$qa_content, $has_content) {
-		if(!$has_content) {
-			// no linked logins
-			$qa_content['form_nodata']=array(
-				'title' => '<br>' . qa_lang_html('plugin_open/no_logins_title'),
-				'style' => 'light',
-				'fields' => array(
-					'note' => array(
-						'note' => qa_lang_html('plugin_open/no_logins_text'),
-						'type' => 'static'
-					)
-				),
-			);
-		} else {
-			$qa_content['custom'] = '<h2>' . qa_lang_html('plugin_open/link_with_account') . '</h2><p>' . qa_lang_html('plugin_open/no_logins_text') . '</p>';
-		}
-
-		// output login providers
-		$loginmodules=qa_load_modules_with('login', 'printCode');
-
-		foreach ($loginmodules as $module) {
-			ob_start();
-			qa_open_login::printCode($module->provider, null, 'associate', 'link');
-			$html=ob_get_clean();
-
-			if (strlen($html))
-				@$qa_content['custom'].= $html.' ';
-		}
-	}
-
 	/* *** Utility functions *** */
 
 	function get_ha_config($provider, $url) {
@@ -810,6 +781,9 @@ class qa_open_logins_page {
 			$zocial = qa_post_text('open_login_zocial');
 			qa_opt('open_login_zocial', empty($zocial) ? 0 : 1);
 
+			$donut = qa_post_text('open_login_donut');
+			qa_opt('open_login_donut', empty($donut) ? 0 : 1);
+
 			$nologin = qa_post_text('open_login_hideform');
 			qa_opt('open_login_hideform', empty($nologin) ? 0 : 1);
 
@@ -837,6 +811,12 @@ class qa_open_logins_page {
 				),
 				array(
 					'type' => 'checkbox',
+					'label' => 'Use <a href="https://github.com/amiyasahu/Donut">Donut Theme</a> (uncheck inline css and zocial in this case)',
+					'value' => qa_opt('open_login_donut') ? true : false,
+					'tags' => 'NAME="open_login_donut"',
+				),
+				array(
+					'type' => 'checkbox',
 					'label' => 'Hide regular login/register forms and keep only external login buttons (might require theme changes)',
 					'value' => qa_opt('open_login_hideform') ? true : false,
 					'tags' => 'NAME="open_login_hideform"',
@@ -849,7 +829,15 @@ class qa_open_logins_page {
 				),
 				array(
 					'type' => 'static',
-					'label' => '<br /><strong>Available login providers</strong>',
+					'label' => 'Note: <i>use the following callback URLs/Redirect URLs when registering your application: <br />
+								<strong><code>' . qa_opt('site_url') . 'index.php</code></strong> and
+								<strong><code>' . qa_opt('site_url') . '</code></strong>.
+								Also, if you are using both HTTP and HTTPS, you will need to register both callback URLs for
+								each protocole.</i>',
+				),
+				array(
+					'type' => 'static',
+					'label' => '<br /><strong><u>Available login providers</u></strong>',
 				),
 			),
 
@@ -870,6 +858,11 @@ class qa_open_logins_page {
 
 			$provider = str_ireplace('.php', '', $providerFile);
 			$key = strtolower($provider);
+
+			$form['fields'][] = array(
+				'type' => 'static',
+				'label' => '<strong><u><i class="fa fa-'.strtolower($provider).'">&nbsp;</i>' . $provider . '</u></strong>',
+			);
 
 			$form['fields'][] = array(
 				'type' => 'checkbox',
